@@ -1,6 +1,10 @@
 import express from "express";
 import jwt from "jsonwebtoken"
-
+import userModel from "../models/user.model.js";
+import { authenticate } from "../middleware/auth.middleware.js";
+import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+dotenv.config();
 
 const app = express();
 
@@ -13,32 +17,84 @@ app.get("/api", (req, res) => {
 })
 
 
-app.post("/api/auth/register", (req, res) => {
+app.post("/api/auth/register", async (req, res) => {
 
     const { email, name, password } = req.body
 
-    /**
-     * Save Data to DB
-     */
+    const user = await userModel.create({
+        email, name, password: await bcrypt.hash(password, 10)
+    })
 
     const token = jwt.sign(
         {
-            email, name
-            // _id
+            id: user._id
         },
-        "9d5a708671477e4b11776a9756084f2285dc46e73f918903bff3309275f17c4f1e2c3aa7123bca7fcc84cdcc9a5c990954133e631571ec50"
+        process.env.JWT_SECRET
     )
 
     res.status(201).json({
         message: "User Create Successfully",
         data: {
             user: {
-                email, name
+                email,
+                name,
+                id: user._id
             },
             token
         }
     })
 
+
+})
+
+
+app.get("/api/auth/me", authenticate, async (req, res) => {
+
+    console.log(req.user)
+
+    res.status(200).json({
+        data: {
+            user: req.user
+        }
+    })
+
+})
+
+
+app.post("/api/auth/login", async (req, res) => {
+
+
+    /**
+     * password = Test123#
+     */
+    const { email, password } = req.body
+
+    const user = await userModel.findOne({
+        email
+    })
+
+    const isValidPassword = bcrypt.compare(password, user.password)
+
+    if (!isValidPassword) {
+        return res.status(400).json({
+            message: "Invalid Email or Password"
+        })
+    }
+
+    const token = jwt.sign({
+        id: user._id
+    }, process.env.JWT_SECRET)
+
+    res.status(200).json({
+        message: "user loggedIn successfully",
+        data: {
+            user: {
+                email: user.email,
+                name: user.name
+            }
+        },
+        token
+    })
 
 })
 
