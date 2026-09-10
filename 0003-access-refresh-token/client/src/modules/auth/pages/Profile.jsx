@@ -1,24 +1,32 @@
-import { useAuth } from '../context/AuthContext'
+import React, { useEffect } from 'react'
+import { useAuthContext } from "../context/AuthProvider"
+import useApi from "../../shared/useApi"
+
 
 const Profile = () => {
-  const { user, loading, isAuthenticated, logout } = useAuth()
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
+    const authContext = useAuthContext()
+    const api = useApi()
 
-  if (!isAuthenticated) {
-    return <div>Not logged in</div>
-  }
+    async function fetchProfile() {
 
-  return (
-    <div>
-      <h1>Profile</h1>
-      <p>Name: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <button onClick={logout}>Logout</button>
-    </div>
-  )
+        const response = await api.get("/auth/me")
+
+        authContext.setUser(response.data.data.user)
+
+    }
+
+    useEffect(() => {
+        fetchProfile()
+    },[])
+
+    return (
+        <main>
+            <h1>Profile</h1>
+            <p>Name: {authContext.user?.name}</p>
+            <p>Email: {authContext.user?.email}</p>
+        </main>
+    )
 }
 
 export default Profile

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router"
-import Profile from "../modules/auth/pages/Profile"
 import Register from "../modules/auth/pages/Register"
+import Profile from "../modules/auth/pages/Profile"
 
 
 const router = createBrowserRouter([
@@ -13,6 +13,5 @@ const router = createBrowserRouter([
         element: <Profile />
     }
 ])
-
 
 export default router

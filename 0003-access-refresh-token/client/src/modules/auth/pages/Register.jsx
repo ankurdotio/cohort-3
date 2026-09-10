@@ -1,46 +1,70 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
-import { useAuth } from '../context/AuthContext'
-import useApi from '../../shared/api'
+import React, { useState } from 'react'
+import useApi from "../../shared/useApi"
+import { useAuthContext } from "../context/AuthProvider"
+import { useNavigate } from "react-router"
+
 
 const Register = () => {
-    const auth = useAuth()
-    const navigate = useNavigate()
+
     const api = useApi()
-    const [ form, setForm ] = useState({ name: "", email: "", password: "" })
-    const [ error, setError ] = useState(null)
+    const authContext = useAuthContext()
 
-    const handleChange = (e) => {
-        setForm({ ...form, [ e.target.name ]: e.target.value })
+    const navigate = useNavigate()
+
+
+    const [ name, setName ] = useState("")
+    const [ email, setEmail ] = useState("")
+    const [ password, setPassword ] = useState("")
+
+    async function handleSubmit(event) {
+        event.preventDefault()
+
+        /**
+         * http://localhost:5173/api/auth/register
+         */
+        const response = await api.post('/auth/register', {
+            name,
+            email,
+            password
+        })
+
+        console.log(response.data)
+
+        authContext.setAccessToken(response.data.accessToken)
+        authContext.setUser(response.data.data.user)
+
+        navigate("/profile")
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError(null)
-        try {
-
-            const response = await api.post("/auth/register", form)
-
-
-            console.log(response.data)
-
-
-        } catch (err) {
-            setError(err?.message || "Registration failed")
-        }
-    }
 
     return (
-        <div>
-            <h1>Register</h1>
-            <form onSubmit={handleSubmit}>
-                <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
-                <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} />
-                <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
-                <button type="submit">Register</button>
+        <main>
+
+            <form
+                className='flex-col gap-4'
+                onSubmit={handleSubmit}>
+                <input type="text"
+                    className='border p-2 rounded-sm'
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder='Name'
+                />
+                <input type="email"
+                    className='border p-2 rounded-sm'
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder='Email'
+                />
+                <input type="password"
+                    className='border p-2 rounded-sm'
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder='Password'
+                />
+                <button type="submit" className='border p-2 bg-blue-200 rounded-sm'>Register</button>
             </form>
-            {error && <p>{error}</p>}
-        </div>
+
+        </main>
     )
 }
 
