@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Shortener: SRS · Sheryians Coding School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,300;0,600;0,700;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Design Tokens ── */
+:root {
+  --ink:#0E0F14; --paper:#F5F2EB; --paper2:#EDE9DF; --paper3:#E4DFD3; --rule:#D4CEBC;
+  --muted:#6B6455; --accent:#C84B1F; --accent2:#1A6B4A; --accent3:#1B4587; --gold:#B8860B;
+  --code-bg:#1A1C24; --code-text:#E2DCCC; --flag-c:#5BA4CF; --val-c:#F4A261;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background-color:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;margin:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dataFlow{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+.animate-fade-up{animation:fadeUp .4s ease both}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+/* ── Layout ── */
+.layout-container{display:flex;min-height:100vh}
+.sidebar{width:260px;flex-shrink:0;background-color:var(--ink);position:sticky;top:0;height:100vh;overflow-y:auto;padding:32px 0 40px}
+.main-content{flex:1;max-width:calc(100% - 260px);padding:56px 56px 80px}
+.main-inner{max-width:820px}
+@media (max-width:900px){.sidebar{display:none}.main-content{max-width:100%}}
+@media (max-width:768px){.main-content{padding:32px 24px 64px}}
+
+/* ── Sidebar ── */
+.nav-brand{padding:0 24px;margin-bottom:24px}
+.nav-brand .logo{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff}
+.nav-brand .logo .accent-dot{color:var(--accent)}
+.nav-brand .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.06em;margin-top:2px}
+.nav-group-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;padding:0 24px;margin-top:16px;margin-bottom:4px}
+.nav-link{display:flex;align-items:center;gap:8px;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:rgba(255,255,255,.5);border-left:2px solid transparent;text-decoration:none;transition:color 150ms ease,background-color 150ms ease}
+.nav-link:hover{color:#fff;background-color:rgba(255,255,255,.04)}
+.nav-link.active{color:#fff;border-left-color:var(--accent);background-color:rgba(200,75,31,.08)}
+.nav-num{width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background-color:rgba(255,255,255,.08);font-family:'IBM Plex Mono',monospace;font-size:9px;border-radius:4px;color:inherit}
+.nav-link:hover .nav-num,.nav-link.active .nav-num{background-color:var(--accent);color:#fff}
+
+/* ── Hero ── */
+.hero{margin-bottom:64px;padding-bottom:40px;border-bottom:1px solid var(--rule)}
+.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,58px);font-weight:900;color:var(--ink);line-height:1.05;letter-spacing:-.02em;margin:0 0 20px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero-desc{font-size:16px;color:var(--muted);max-width:560px;line-height:1.65;margin:0 0 24px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px}
+.hero-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);border:1px solid var(--rule);border-radius:9999px;padding:2px 12px}
+.url-morph{margin-top:32px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.9}
+.url-morph .long{color:var(--muted);word-break:break-all}
+.url-morph .arrow{color:var(--rule);display:block}
+.url-morph .short{color:var(--accent);font-size:20px;font-weight:600}
+
+/* ── Sections ── */
+.section-block{margin-bottom:72px;scroll-margin-top:24px}
+.section-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:28px}
+.section-header-text{padding-top:4px}
+.section-num-big{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:var(--rule);user-select:none;line-height:1}
+.section-title{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--ink);line-height:1.2}
+.section-subtitle{font-size:13px;color:var(--muted);margin-top:4px}
+h3{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);margin-top:28px;margin-bottom:12px}
+h4{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin:24px 0 8px}
+p{font-size:14.5px;color:#2A2720;line-height:1.7;margin:0 0 12px}
+ul.plain{margin:0 0 12px;padding-left:20px;font-size:14.5px;color:#2A2720}
+ul.plain li{margin-bottom:4px}
+:not(pre)>code{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);background-color:var(--paper3);border:1px solid var(--rule);border-radius:4px;padding:2px 4px}
+.divider{border:none;border-top:1px solid var(--rule);margin:40px 0}
+
+/* ── Boxes ── */
+.concept-box{background-color:var(--paper2);border-left:3px solid var(--accent3);border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0}
+.concept-box-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--accent3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.concept-box-text{font-size:14px;color:var(--ink);line-height:1.65;margin:0}
+.concept-box-text + .concept-box-text{margin-top:8px}
+.note-box,.warning-box{border-radius:8px;padding:12px 16px;margin:16px 0;display:flex;gap:12px;align-items:flex-start}
+.note-box{background-color:#FEF9EC;border:1px solid #EDD97A}
+.warning-box{background-color:#FEF2F2;border:1px solid #FCA5A5}
+.note-box-icon,.warning-box-icon{font-size:18px;line-height:1;margin-top:2px}
+.note-box-text{font-size:13px;color:#5C4A00;margin:0}
+.note-box-text strong{color:#3D3000}
+.warning-box-text{font-size:13px;color:#7F1D1D;margin:0}
+
+/* ── Badges ── */
+.badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:.06em;padding:2px 10px;border-radius:4px;white-space:nowrap}
+.badge-accent{background-color:var(--accent)}
+.badge-green{background-color:var(--accent2)}
+.badge-blue{background-color:var(--accent3)}
+.badge-gold{background-color:var(--gold)}
+
+/* ── Code ── */
+.code-block{border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.06);margin:16px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background-color:#13141A;border-bottom:1px solid rgba(255,255,255,.06)}
+.code-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em}
+.code-copy-btn{background:none;border:none;font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:color 150ms ease}
+.code-copy-btn:hover{color:rgba(255,255,255,.7)}
+.code-pre{background-color:var(--code-bg);color:var(--code-text);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.75;padding:16px 20px;overflow-x:auto;margin:0}
+.token-command{color:#87CEEB;font-weight:bold}
+.token-flag{color:#5BA4CF}
+.token-val{color:#F4A261}
+.token-string{color:#98C379}
+.token-comment{color:rgba(255,255,255,.3);font-style:italic}
+.token-yaml-key{color:#C678DD}
+.token-operator{color:#E5C07B}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto;margin:16px 0}
+.flag-table,.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin:0}
+.flag-table th{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background-color:var(--paper3);text-align:left;padding:8px 12px;border:1px solid var(--rule);font-weight:500}
+.flag-table td{padding:8px 12px;border:1px solid var(--rule);vertical-align:top;font-size:13.5px}
+.flag-table tbody tr,.compare-table tbody tr{transition:background-color 100ms ease}
+.flag-table tbody tr:hover,.compare-table tbody tr:hover{background-color:var(--paper2)}
+.compare-table{border-radius:8px;overflow:hidden}
+.compare-table th{background-color:var(--ink);color:#fff;font-size:13px;font-weight:600;text-align:left;padding:12px 16px;border:1px solid var(--ink)}
+.compare-table td{font-size:13px;padding:12px 16px;border:1px solid var(--rule);vertical-align:top}
+.compare-table .cell-title{font-weight:600;color:var(--ink);white-space:nowrap}
+.compare-table .cell-muted{color:var(--muted)}
+.compare-table .cell-highlight{color:var(--accent2);font-weight:500}
+
+/* ── Flow diagram ── */
+.flow-diagram{display:flex;flex-direction:column;margin:16px 0}
+.flow-step{display:flex;gap:16px}
+.flow-connector{display:flex;flex-direction:column;align-items:center}
+.flow-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.flow-dot-accent{background-color:var(--accent)}
+.flow-dot-green{background-color:var(--accent2)}
+.flow-line{width:2px;background-color:var(--rule);flex:1;margin:4px 0}
+.flow-content{padding-bottom:16px}
+.flow-title{font-size:14px;font-weight:600;color:var(--ink)}
+.flow-desc{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+/* ── Requirements ── */
+.req{border-top:1px solid var(--rule);padding:24px 0 8px}
+.req-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.req-head h3{margin:0}
+.done-when{display:flex;gap:10px;align-items:baseline;margin:8px 0 12px}
+.done-when p{margin:0;font-size:14px}
+
+/* ── Buttons & interactive widgets ── */
+.btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;background-color:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:6px;padding:8px 14px;cursor:pointer;transition:background-color 150ms ease}
+.btn:hover:not(:disabled){background-color:var(--accent);border-color:var(--accent)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn-ghost:hover:not(:disabled){background-color:var(--paper2);border-color:var(--muted);color:var(--ink)}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--paper);color:var(--muted);border:1px solid var(--rule);border-radius:9999px;padding:3px 10px;cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--muted)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.try-box{border:1px solid var(--rule);border-radius:10px;padding:20px;margin:20px 0;background:var(--paper)}
+.try-box .badge{margin-bottom:12px}
+.try-box p.try-intro{font-size:13.5px;color:var(--muted);margin-bottom:12px}
+.try-row{display:flex;gap:8px;flex-wrap:wrap}
+.try-input{flex:1;min-width:200px;font-family:'IBM Plex Mono',monospace;font-size:13px;padding:9px 12px;border:1px solid var(--rule);border-radius:6px;background:#FBFAF6;color:var(--ink)}
+.try-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.rule-list{list-style:none;padding:0;margin:14px 0 0;font-size:13.5px}
+.rule-list li{display:flex;gap:10px;padding:4px 0;color:var(--muted)}
+.rule-list li .mark{font-family:'IBM Plex Mono',monospace;width:16px;flex-shrink:0}
+.rule-list li.pass{color:var(--ink)} .rule-list li.pass .mark{color:var(--accent2)}
+.rule-list li.fail{color:var(--ink)} .rule-list li.fail .mark{color:var(--accent)}
+.verdict{margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px 12px;border-radius:6px}
+.verdict.ok{background:rgba(26,107,74,.1);color:var(--accent2)}
+.verdict.bad{background:rgba(200,75,31,.08);color:var(--accent)}
+.verdict:empty{display:none}
+.gen-output{margin-top:14px;font-family:'IBM Plex Mono',monospace}
+.gen-code{font-size:32px;font-weight:600;color:var(--accent);letter-spacing:.08em}
+.gen-url{font-size:12.5px;color:var(--muted)}
+
+/* ── Step-through diagram ── */
+.stepper{border:1px solid var(--rule);border-radius:10px;background:var(--paper2);padding:20px;margin:20px 0}
+.stepper svg{width:100%;height:auto;display:block}
+.sd-node rect{fill:var(--paper);stroke:var(--rule);stroke-width:1.5;transition:stroke 200ms ease,fill 200ms ease}
+.sd-node.active rect{stroke:var(--accent);fill:#FBF3EE}
+.sd-node .n-title{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;fill:var(--ink)}
+.sd-node .n-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;fill:var(--muted)}
+.sd-path{fill:none;stroke:var(--rule);stroke-width:2}
+.sd-path.active{stroke:var(--accent);stroke-dasharray:8 12;animation:dataFlow 1.5s linear infinite}
+.sd-label{font-family:'IBM Plex Mono',monospace;font-size:10px;fill:var(--muted)}
+.sd-label.active{fill:var(--accent)}
+.stepper-text{margin-top:16px;min-height:110px}
+.stepper-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px}
+.stepper-desc{font-size:14px;color:#2A2720;margin-bottom:10px}
+.stepper-code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--code-bg);color:var(--code-text);padding:8px 12px;border-radius:6px;overflow-x:auto;white-space:pre}
+.stepper-controls{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:12px}
+.stepper-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+
+/* ── Wireframe ── */
+.wire{border:1.5px dashed var(--rule);border-radius:10px;padding:24px;background:var(--paper);margin:16px 0}
+.wire-part{position:relative;padding-left:36px;margin-bottom:18px}
+.wire-part:last-child{margin-bottom:0}
+.wire-num{position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center}
+.wire-h{font-family:'Fraunces',serif;font-size:22px;font-weight:900;line-height:1.1}
+.wire-sub{font-size:12.5px;color:var(--muted)}
+.wire-form{display:flex;gap:8px}
+.wire-input{flex:1;border:1px solid var(--rule);border-radius:6px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);background:#FBFAF6}
+.wire-btn{background:var(--ink);color:#fff;border-radius:6px;padding:8px 14px;font-size:12.5px}
+.wire-result{border:1px solid var(--rule);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);gap:12px}
+.wire-mini{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);border:1px solid var(--rule);border-radius:4px;padding:2px 8px}
+.wire-row{display:grid;grid-template-columns:90px 1fr auto auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--paper3);font-size:12px}
+.wire-row .c{font-family:'IBM Plex Mono',monospace;color:var(--accent)}
+.wire-row .o{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wire-row .k{font-family:'IBM Plex Mono',monospace;color:var(--ink)}
+@media (max-width:600px){.wire-form{flex-direction:column}.wire-row{grid-template-columns:70px 1fr auto}.wire-row .a{display:none}}
+
+/* ── Checklist ── */
+.progress{display:flex;align-items:center;gap:12px;margin:8px 0 20px}
+.progress-bar{flex:1;height:6px;background:var(--paper3);border-radius:9999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--accent2);transition:width 250ms ease}
+.progress-text{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap}
+.check-list{list-style:none;padding:0;margin:0 0 8px}
+.check-list li{border-bottom:1px solid var(--paper3)}
+.check-list label{display:flex;gap:12px;align-items:flex-start;padding:10px 0;cursor:pointer;font-size:14px;color:#2A2720}
+.check-list input{margin-top:5px;accent-color:var(--accent2);width:15px;height:15px;flex-shrink:0}
+.check-list input:checked + span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--rule)}
+.all-done{display:none}
+.all-done.show{display:flex}
+
+/* ── Stretch ── */
+.stretch{display:grid;grid-template-columns:auto 1fr;gap:12px 16px;align-items:baseline;border-top:1px solid var(--rule);padding:16px 0}
+.stretch h3{margin:0 0 4px;font-size:16px}
+.stretch p{margin:0;font-size:14px}
+
+/* ── Quiz ── */
+.quiz-box{background-color:var(--ink);border-radius:12px;padding:24px;margin:32px 0;border:1px solid rgba(255,255,255,.08)}
+.quiz-question{font-size:15px;color:#fff;font-weight:500;line-height:1.6;margin-bottom:20px}
+.quiz-options{display:flex;flex-direction:column;gap:12px}
+.quiz-option{text-align:left;font-family:'DM Sans',sans-serif;font-size:13.5px;color:rgba(255,255,255,.7);background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:12px 16px;cursor:pointer;transition:all 200ms ease}
+.quiz-option:hover:not(:disabled){border-color:var(--accent);color:#fff;background-color:rgba(200,75,31,.08)}
+.quiz-option:disabled{cursor:not-allowed}
+.quiz-option.correct{border-color:var(--accent2)!important;background-color:rgba(26,107,74,.15)!important;color:#fff!important;opacity:1!important}
+.quiz-option.incorrect{border-color:var(--accent)!important;background-color:rgba(200,75,31,.15)!important;color:#fff!important;opacity:1!important}
+.quiz-feedback{margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.quiz-feedback.correct{color:#4FBF8E}
+.quiz-feedback.incorrect{color:#E8825C}
+.quiz-feedback.hidden{display:none}
+
+/* ── Footer ── */
+.site-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);border-top:2px solid var(--rule);padding-top:16px;margin-top:64px}
+</style>
+</head>
+<body>
+<div class="layout-container">
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <nav class="sidebar" aria-label="Sections">
+    <div class="nav-brand">
+      <div class="logo">URL<span class="accent-dot">.</span>Shortener</div>
+      <div class="sub">Sheryians Coding School</div>
+    </div>
+
+    <div class="nav-group-label">Start here</div>
+    <a href="#srs" class="nav-link active"><span class="nav-num">1</span>What is an SRS?</a>
+    <a href="#intro" class="nav-link"><span class="nav-num">2</span>Introduction</a>
+    <a href="#flow" class="nav-link"><span class="nav-num">3</span>How it works</a>
+
+    <div class="nav-group-label">Requirements</div>
+    <a href="#fr" class="nav-link"><span class="nav-num">4</span>Functional</a>
+    <a href="#nfr" class="nav-link"><span class="nav-num">5</span>Non-functional</a>
+
+    <div class="nav-group-label">Build it</div>
+    <a href="#model" class="nav-link"><span class="nav-num">6</span>Data model</a>
+    <a href="#api" class="nav-link"><span class="nav-num">7</span>API specification</a>
+    <a href="#screen" class="nav-link"><span class="nav-num">8</span>The screen</a>
+    <a href="#structure" class="nav-link"><span class="nav-num">9</span>Project structure</a>
+    <a href="#order" class="nav-link"><span class="nav-num">10</span>Build order</a>
+    <a href="#stretch" class="nav-link"><span class="nav-num">11</span>Stretch goals</a>
+    <a href="#glossary" class="nav-link"><span class="nav-num">12</span>Glossary</a>
+  </nav>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main class="main-content">
+   <div class="main-inner">
+
+    <!-- HERO -->
+    <header class="hero animate-fade-up">
+      <div class="hero-eyebrow">Software Requirements Specification · v1.0</div>
+      <h1>Long links?</h1>
+      <p class="hero-desc">URL Shortener is a simple app: paste a long link, get a short one, and see how many people opened it. This document is everything we'll build, and nothing we won't.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">1–2 day build</span>
+        <span class="hero-tag">No authentication</span>
+        <span class="hero-tag">MongoDB · Express · React · Node</span>
+        <span class="hero-tag">8 FRs · 6 NFRs</span>
+      </div>
+      <div class="url-morph" aria-label="Example: a long URL becomes a short one">
+        <span class="long">https://www.example.com/blog/2026/09/how-to-learn-backend-without-fear?ref=whatsapp&amp;utm_source=class</span>
+        <span class="arrow">↓</span>
+        <span class="short">localhost:3000/aZ3kP9</span>
+      </div>
+    </header>
+
+    <!-- 01 SRS -->
+    <section class="section-block animate-fade-up" id="srs">
+      <div class="section-header">
+        <div class="section-num-big">01</div>
+        <div class="section-header-text">
+          <div class="section-title">What is an SRS?</div>
+          <div class="section-subtitle">Read this first. It's the agreement we make before writing any code.</div>
+        </div>
+      </div>
+
+      <p>An <strong>SRS (Software Requirements Specification)</strong> answers one question before development starts: <em>what exactly are we building?</em> Real companies write one so that developers, designers, and testers all agree on the same thing. You'll see these documents in every job.</p>
+
+      <div class="concept-box">
+        <div class="concept-box-label">Key Concept</div>
+        <p class="concept-box-text"><strong>Functional requirements (FR)</strong> describe <em>what</em> the app does. Example: "The user can shorten a link."</p>
+        <p class="concept-box-text"><strong>Non-functional requirements (NFR)</strong> describe <em>how well</em> it does it. Example: "The redirect should feel instant."</p>
+      </div>
+
+      <div class="note-box">
+        <div class="note-box-icon">💡</div>
+        <p class="note-box-text">If something isn't written in this document, <strong>we are not building it today.</strong> That keeps the project small enough to finish, and finishing is the whole point.</p>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">"The redirect should respond in under 300 ms." Which type of requirement is this?</p>
+        <div class="quiz-options" id="quiz-srs-1">
+          <button onclick="answerQuiz('quiz-srs-1', this, false)" class="quiz-option">A &nbsp;—&nbsp; Functional: it describes a feature</button>
+          <button onclick="answerQuiz('quiz-srs-1', this, true)" class="quiz-option">B &nbsp;—&nbsp; Non-functional: it describes how well the feature works</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-srs-1-feedback"></div>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">"The user can delete a link." Which type of requirement is this?</p>
+        <div class="quiz-options" id="quiz-srs-2">
+          <button onclick="answerQuiz('quiz-srs-2', this, true)" class="quiz-option">A &nbsp;—&nbsp; Functional</button>
+          <button onclick="answerQuiz('quiz-srs-2', this, false)" class="quiz-option">B &nbsp;—&nbsp; Non-functional</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-srs-2-feedback"></div>
+      </div>
+    </section>
+
+    <!-- 02 INTRO -->
+    <section class="section-block animate-fade-up" id="intro">
+      <div class="section-header">
+        <div class="section-num-big">02</div>
+        <div class="section-header-text">
+          <div class="section-title">Introduction</div>
+          <div class="section-subtitle">Purpose, scope, and who uses the app</div>
+        </div>
+      </div>
+
+      <h3>Purpose</h3>
+      <p>Long URLs are ugly, hard to read, and break when you paste them in messages. URL Shortener turns any long link into a 6-character short link, and counts how many times each short link was opened.</p>
+
+      <h3>Scope</h3>
+      <div class="table-wrap">
+        <table class="compare-table">
+          <thead><tr><th>In scope (we build this)</th><th>Out of scope (we don't)</th></tr></thead>
+          <tbody>
+            <tr><td class="cell-highlight">Shorten a long URL</td><td class="cell-muted">Login, signup, or user accounts</td></tr>
+            <tr><td class="cell-highlight">Redirect from the short link to the original</td><td class="cell-muted">Custom short names (see Stretch goals)</td></tr>
+            <tr><td class="cell-highlight">Count clicks on each link</td><td class="cell-muted">Link expiry (see Stretch goals)</td></tr>
+            <tr><td class="cell-highlight">List all links with their click counts</td><td class="cell-muted">Charts or analytics dashboards</td></tr>
+            <tr><td class="cell-highlight">Copy and delete links</td><td class="cell-muted">Rate limiting, admin panel</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Users</h3>
+      <p>There is only one type of user: <strong>anyone who opens the app</strong>. There is no login, so every link is visible to everyone using the app.</p>
+    </section>
+
+    <!-- 03 FLOW -->
+    <section class="section-block animate-fade-up" id="flow">
+      <div class="section-header">
+        <div class="section-num-big">03</div>
+        <div class="section-header-text">
+          <div class="section-title">How it works</div>
+          <div class="section-subtitle">The user's journey, then what happens inside the server</div>
+        </div>
+      </div>
+
+      <h3>The user flow</h3>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-connector"><div class="flow-dot flow-dot-accent"></div><div class="flow-line"></div></div>
+          <div class="flow-content"><div class="flow-title">Paste a long URL and click Shorten</div><div class="flow-desc">The React app sends it to <code>POST /api/urls</code>.</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-connector"><div class="flow-dot flow-dot-accent"></div><div class="flow-line"></div></div>
+          <div class="flow-content"><div class="flow-title">The server checks it and saves it</div><div class="flow-desc">It validates the URL, generates a unique 6-character code, and stores both in MongoDB.</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-connector"><div class="flow-dot flow-dot-accent"></div><div class="flow-line"></div></div>
+          <div class="flow-content"><div class="flow-title">Copy and share the short link</div><div class="flow-desc">The app shows <code>localhost:3000/aZ3kP9</code> with a Copy button.</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-connector"><div class="flow-dot flow-dot-accent"></div><div class="flow-line"></div></div>
+          <div class="flow-content"><div class="flow-title">Someone opens the short link</div><div class="flow-desc">Our server finds the code, adds 1 to its clicks, and redirects them to the original URL.</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-connector"><div class="flow-dot flow-dot-green"></div></div>
+          <div class="flow-content"><div class="flow-title">The list shows the updated click count</div><div class="flow-desc">Every link, newest first, with how many times it was opened.</div></div>
+        </div>
+      </div>
+
+      <h3>Inside the server: what happens when a short link is opened</h3>
+      <p>This is the most important part of the project. Step through it and notice that the server never sends JSON here. It only tells the browser where to go.</p>
+
+      <div class="stepper" id="stepper">
+        <svg viewBox="0 0 720 180" role="img" aria-label="Diagram of a short link request: browser, Express, MongoDB, original site">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D4CEBC"/></marker>
+            <marker id="arr-on" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C84B1F"/></marker>
+          </defs>
+
+          <path id="p5" class="sd-path" d="M90 70 Q360 -14 630 70" marker-end="url(#arr)"/>
+          <text id="l5" class="sd-label" x="360" y="24" text-anchor="middle">browser follows Location</text>
+
+          <path id="p1" class="sd-path" d="M160 92 L198 92" marker-end="url(#arr)"/>
+          <path id="p3" class="sd-path" d="M340 92 L378 92" marker-end="url(#arr)"/>
+          <path id="p4" class="sd-path" d="M270 126 L270 152 L90 152 L90 130" marker-end="url(#arr)"/>
+          <text id="l4" class="sd-label" x="180" y="170" text-anchor="middle">302 + Location header</text>
+
+          <g class="sd-node" id="n-browser"><rect x="20" y="70" width="140" height="56" rx="8"/><text class="n-title" x="90" y="94" text-anchor="middle">Browser</text><text class="n-sub" x="90" y="112" text-anchor="middle">the user</text></g>
+          <g class="sd-node" id="n-express"><rect x="200" y="70" width="140" height="56" rx="8"/><text class="n-title" x="270" y="94" text-anchor="middle">Express</text><text class="n-sub" x="270" y="112" text-anchor="middle">/:shortCode</text></g>
+          <g class="sd-node" id="n-mongo"><rect x="380" y="70" width="140" height="56" rx="8"/><text class="n-title" x="450" y="94" text-anchor="middle">MongoDB</text><text class="n-sub" x="450" y="112" text-anchor="middle">urls collection</text></g>
+          <g class="sd-node" id="n-original"><rect x="560" y="70" width="140" height="56" rx="8"/><text class="n-title" x="630" y="94" text-anchor="middle">Original site</text><text class="n-sub" x="630" y="112" text-anchor="middle">example.com</text></g>
+        </svg>
+
+        <div class="stepper-text" aria-live="polite">
+          <div class="stepper-title" id="st-title"></div>
+          <div class="stepper-desc" id="st-desc"></div>
+          <div class="stepper-code" id="st-code"></div>
+        </div>
+        <div class="stepper-controls">
+          <button class="btn btn-ghost" id="st-back">Back</button>
+          <span class="stepper-count" id="st-count"></span>
+          <button class="btn" id="st-next">Forward</button>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">When someone opens a short link, who adds 1 to the click count?</p>
+        <div class="quiz-options" id="quiz-flow-1">
+          <button onclick="answerQuiz('quiz-flow-1', this, false)" class="quiz-option">A &nbsp;—&nbsp; The React frontend, after the page opens</button>
+          <button onclick="answerQuiz('quiz-flow-1', this, true)" class="quiz-option">B &nbsp;—&nbsp; The Express server, before it sends the redirect</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-flow-1-feedback"></div>
+      </div>
+    </section>
+
+    <!-- 04 FR -->
+    <section class="section-block animate-fade-up" id="fr">
+      <div class="section-header">
+        <div class="section-num-big">04</div>
+        <div class="section-header-text">
+          <div class="section-title">Functional requirements</div>
+          <div class="section-subtitle">What the app does. Each one has a clear "done when" so you know when to move on.</div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-1</span><h3>Shorten a URL</h3></div>
+        <p>The user enters a long URL and receives a short URL.</p>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>Submitting a valid URL saves it in the database and shows a short link like <code>http://localhost:3000/aZ3kP9</code>.</p></div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-2</span><h3>Validate the URL</h3></div>
+        <p>The server must reject bad input <em>before</em> saving anything. The frontend can check too, but the server is the one that decides.</p>
+        <div class="table-wrap">
+          <table class="flag-table">
+            <thead><tr><th>Input</th><th>Status</th><th>Message</th></tr></thead>
+            <tbody>
+              <tr><td>Empty</td><td><code>400</code></td><td>Please enter a URL</td></tr>
+              <tr><td>Not a URL (<code>hello</code>)</td><td><code>400</code></td><td>Please enter a valid URL starting with http:// or https://</td></tr>
+              <tr><td>Wrong protocol (<code>javascript:alert(1)</code>, <code>ftp://…</code>)</td><td><code>400</code></td><td>Please enter a valid URL starting with http:// or https://</td></tr>
+              <tr><td>Longer than 2048 characters</td><td><code>400</code></td><td>URL is too long</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>Each bad input returns status 400 with its message, and the message appears under the input box.</p></div>
+
+        <div class="try-box">
+          <span class="badge badge-blue">Try it</span>
+          <p class="try-intro">This runs the same rules our server will. Type a URL or pick one of the examples.</p>
+          <div class="try-row">
+            <input class="try-input" id="val-input" type="text" placeholder="Paste a long URL here…" aria-label="URL to validate">
+            <button class="btn" id="val-btn">Check URL</button>
+          </div>
+          <div class="try-chips">
+            <button class="chip" data-url="https://sheryians.com/courses">https://sheryians.com/courses</button>
+            <button class="chip" data-url="hello">hello</button>
+            <button class="chip" data-url="javascript:alert(1)">javascript:alert(1)</button>
+            <button class="chip" data-url="">(empty)</button>
+          </div>
+          <ul class="rule-list" id="val-rules"></ul>
+          <div class="verdict" id="val-verdict"></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-3</span><h3>Generate a unique short code</h3></div>
+        <p>Each link gets a random 6-character code made from <code>a–z</code>, <code>A–Z</code>, and <code>0–9</code>. That's 62 characters, so there are 62⁶ ≈ <strong>56.8 billion</strong> possible codes. Before saving, the server checks that the code isn't already used, and generates a new one if it is.</p>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>No two links ever share the same code.</p></div>
+
+        <div class="try-box">
+          <span class="badge badge-blue">Try it</span>
+          <p class="try-intro">Each click picks 6 random characters from the 62 allowed ones, which is exactly what <code>generateCode.js</code> will do.</p>
+          <button class="btn" id="gen-btn">Generate a code</button>
+          <div class="gen-output">
+            <div class="gen-code" id="gen-code">······</div>
+            <div class="gen-url" id="gen-url">http://localhost:3000/······</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-4</span><h3>Redirect using the short link</h3></div>
+        <p>Opening <code>/:shortCode</code> redirects the browser to the original URL with status <strong>302</strong>. An unknown code shows a simple "This short link doesn't exist" page with status 404.</p>
+        <div class="concept-box">
+          <div class="concept-box-label">Why 302 and not 301?</div>
+          <p class="concept-box-text">Browsers remember <strong>301</strong> redirects permanently. The next time someone opens the link, the browser skips our server and goes straight to the original. With <strong>302</strong>, every visit reaches our server, so every visit gets counted.</p>
+        </div>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>Opening a short link lands on the original page, and an unknown code shows the 404 page.</p></div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-5</span><h3>Count clicks</h3></div>
+        <p>Every successful redirect increases that link's <code>clicks</code> by 1.</p>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>Opening a link 3 times shows 3 clicks in the list.</p></div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-6</span><h3>View all links</h3></div>
+        <p>The home page lists every link, newest first, with the short URL, original URL, click count, and created date. When there are no links, it shows "No links yet. Shorten your first one above."</p>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>A newly created link appears at the top of the list without refreshing the page.</p></div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-7</span><h3>Copy a short link</h3></div>
+        <p>Each short link has a Copy button. It copies the link to the clipboard and changes to "Copied!" for 2 seconds.</p>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>Pasting after clicking Copy gives the correct short URL.</p></div>
+      </div>
+
+      <div class="req">
+        <div class="req-head"><span class="badge badge-accent">FR-8</span><h3>Delete a link</h3></div>
+        <p>Each link has a Delete button. It asks for confirmation, deletes the link, and updates the list.</p>
+        <div class="done-when"><span class="badge badge-green">Done when</span><p>A deleted link disappears from the list, and its short URL now shows the 404 page.</p></div>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">Why do we redirect with status 302 instead of 301?</p>
+        <div class="quiz-options" id="quiz-fr-1">
+          <button onclick="answerQuiz('quiz-fr-1', this, false)" class="quiz-option">A &nbsp;—&nbsp; 302 responses are faster than 301</button>
+          <button onclick="answerQuiz('quiz-fr-1', this, true)" class="quiz-option">B &nbsp;—&nbsp; Browsers cache 301, so later clicks would skip our server and never be counted</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-fr-1-feedback"></div>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">Which of these should the server reject?</p>
+        <div class="quiz-options" id="quiz-fr-2">
+          <button onclick="answerQuiz('quiz-fr-2', this, false)" class="quiz-option">A &nbsp;—&nbsp; https://sheryians.com/courses</button>
+          <button onclick="answerQuiz('quiz-fr-2', this, true)" class="quiz-option">B &nbsp;—&nbsp; javascript:alert(1)</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-fr-2-feedback"></div>
+      </div>
+    </section>
+
+    <!-- 05 NFR -->
+    <section class="section-block animate-fade-up" id="nfr">
+      <div class="section-header">
+        <div class="section-num-big">05</div>
+        <div class="section-header-text">
+          <div class="section-title">Non-functional requirements</div>
+          <div class="section-subtitle">How well the app works: speed, reliability, safety, and how easy the code is to work with</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="compare-table">
+          <thead><tr><th>ID</th><th>Category</th><th>Requirement</th><th>How we achieve it</th></tr></thead>
+          <tbody>
+            <tr><td class="cell-title">NFR-1</td><td>Performance</td><td>Redirects feel instant (target: under 300 ms).</td><td class="cell-muted">A unique index on <code>shortCode</code>, so MongoDB finds the link directly instead of checking every document.</td></tr>
+            <tr><td class="cell-title">NFR-2</td><td>Reliability</td><td>Short codes never repeat, and click counts stay correct even when many people click at once.</td><td class="cell-muted">A uniqueness check plus the unique index as a safety net. Clicks are updated with <code>$inc</code>, never read-then-save.</td></tr>
+            <tr><td class="cell-title">NFR-3</td><td>Usability</td><td>One simple page that works on mobile (360px and up), with visible feedback for every action.</td><td class="cell-muted">A loading state on the button, clear error messages, "Copied!" feedback, and a layout that stacks on small screens.</td></tr>
+            <tr><td class="cell-title">NFR-4</td><td>Security (basic)</td><td>Only real web links are accepted, and secrets never reach GitHub.</td><td class="cell-muted">Allow only <code>http:</code> and <code>https:</code>, which blocks <code>javascript:</code> links that could run code. Keep <code>.env</code> in <code>.gitignore</code>.</td></tr>
+            <tr><td class="cell-title">NFR-5</td><td>Maintainability</td><td>Anyone in the batch can open the project and find things fast.</td><td class="cell-muted">A fixed folder structure (model → controller → route), one job per file, and the same JSON response shape everywhere.</td></tr>
+            <tr><td class="cell-title">NFR-6</td><td>Portability</td><td>The project runs on any laptop with two commands.</td><td class="cell-muted"><code>npm install</code> and <code>npm run dev</code> on each side. Config comes from <code>.env</code>, and a <code>.env.example</code> is included.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-box-label">Why $inc and not find → clicks++ → save?</div>
+        <p class="concept-box-text">If two people open the link at the same moment, both requests can read <code>clicks: 4</code>, both add 1, and both save <code>5</code>. One click is lost. <code>$inc</code> tells MongoDB to add 1 <strong>inside the database in a single step</strong>, so simultaneous clicks are always counted.</p>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">Why do we update clicks with <code style="background:transparent;border:none;color:#F4A261">$inc</code> instead of find → clicks++ → save?</p>
+        <div class="quiz-options" id="quiz-nfr-1">
+          <button onclick="answerQuiz('quiz-nfr-1', this, true)" class="quiz-option">A &nbsp;—&nbsp; MongoDB adds 1 in a single step, so simultaneous clicks aren't lost</button>
+          <button onclick="answerQuiz('quiz-nfr-1', this, false)" class="quiz-option">B &nbsp;—&nbsp; It's just shorter to write</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-nfr-1-feedback"></div>
+      </div>
+    </section>
+
+    <!-- 06 MODEL -->
+    <section class="section-block animate-fade-up" id="model">
+      <div class="section-header">
+        <div class="section-num-big">06</div>
+        <div class="section-header-text">
+          <div class="section-title">Data model</div>
+          <div class="section-subtitle">One collection, <code>urls</code>, with four things to remember</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="flag-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Rules</th><th>Why it exists</th></tr></thead>
+          <tbody>
+            <tr><td><code>originalUrl</code></td><td>String</td><td>required, trimmed, max 2048</td><td>The long link we redirect to</td></tr>
+            <tr><td><code>shortCode</code></td><td>String</td><td>required, <strong>unique</strong></td><td>The 6-character code in the short link</td></tr>
+            <tr><td><code>clicks</code></td><td>Number</td><td>default <code>0</code></td><td>How many times the link was opened</td></tr>
+            <tr><td><code>createdAt</code> / <code>updatedAt</code></td><td>Date</td><td>automatic (<code>timestamps: true</code>)</td><td>Sorting the list and showing the date</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">src/models/url.model.js</span><button onclick="copyCode(this)" class="code-copy-btn">copy</button></div>
+        <pre class="code-pre"><span class="token-command">const</span> urlSchema = <span class="token-command">new</span> mongoose.Schema(
+  {
+    <span class="token-yaml-key">originalUrl</span>: { <span class="token-yaml-key">type</span>: String, <span class="token-yaml-key">required</span>: <span class="token-val">true</span>, <span class="token-yaml-key">trim</span>: <span class="token-val">true</span>, <span class="token-yaml-key">maxlength</span>: <span class="token-val">2048</span> },
+    <span class="token-yaml-key">shortCode</span>: { <span class="token-yaml-key">type</span>: String, <span class="token-yaml-key">required</span>: <span class="token-val">true</span>, <span class="token-yaml-key">unique</span>: <span class="token-val">true</span> },
+    <span class="token-yaml-key">clicks</span>: { <span class="token-yaml-key">type</span>: Number, <span class="token-yaml-key">default</span>: <span class="token-val">0</span> },
+  },
+  { <span class="token-yaml-key">timestamps</span>: <span class="token-val">true</span> }
+);</pre>
+      </div>
+
+      <div class="note-box">
+        <div class="note-box-icon">💡</div>
+        <p class="note-box-text">We <strong>don't</strong> store the full short URL. The server builds it on the fly as <code>BASE_URL + "/" + shortCode</code>. If we deploy to a real domain later, every link updates automatically.</p>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">Why isn't <code style="background:transparent;border:none;color:#F4A261">shortUrl</code> saved in the database?</p>
+        <div class="quiz-options" id="quiz-model-1">
+          <button onclick="answerQuiz('quiz-model-1', this, true)" class="quiz-option">A &nbsp;—&nbsp; It's built from BASE_URL + shortCode, so it stays correct if the domain changes</button>
+          <button onclick="answerQuiz('quiz-model-1', this, false)" class="quiz-option">B &nbsp;—&nbsp; MongoDB can't store URLs as strings</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-model-1-feedback"></div>
+      </div>
+    </section>
+
+    <!-- 07 API -->
+    <section class="section-block animate-fade-up" id="api">
+      <div class="section-header">
+        <div class="section-num-big">07</div>
+        <div class="section-header-text">
+          <div class="section-title">API specification</div>
+          <div class="section-subtitle">Four routes. Base URL: <code>http://localhost:3000</code></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="compare-table">
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Request body</th><th>Success</th><th>Errors</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-accent">POST</span></td><td><code>/api/urls</code></td><td class="cell-muted"><code>{ originalUrl }</code></td><td>201 + created link</td><td class="cell-muted">400 invalid URL</td></tr>
+            <tr><td><span class="badge badge-blue">GET</span></td><td><code>/api/urls</code></td><td class="cell-muted">none</td><td>200 + array of links</td><td class="cell-muted">500</td></tr>
+            <tr><td><span class="badge badge-gold">DELETE</span></td><td><code>/api/urls/:shortCode</code></td><td class="cell-muted">none</td><td>200 + message</td><td class="cell-muted">404 not found</td></tr>
+            <tr><td><span class="badge badge-blue">GET</span></td><td><code>/:shortCode</code></td><td class="cell-muted">none</td><td>302 redirect</td><td class="cell-muted">404 page</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Every JSON response has the same shape</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">Success · POST /api/urls → 201</span><button onclick="copyCode(this)" class="code-copy-btn">copy</button></div>
+        <pre class="code-pre">{
+  <span class="token-yaml-key">"success"</span>: <span class="token-val">true</span>,
+  <span class="token-yaml-key">"data"</span>: {
+    <span class="token-yaml-key">"_id"</span>: <span class="token-string">"66e1f0c2a9b3..."</span>,
+    <span class="token-yaml-key">"originalUrl"</span>: <span class="token-string">"https://www.example.com/very/long/link"</span>,
+    <span class="token-yaml-key">"shortCode"</span>: <span class="token-string">"aZ3kP9"</span>,
+    <span class="token-yaml-key">"shortUrl"</span>: <span class="token-string">"http://localhost:3000/aZ3kP9"</span>,
+    <span class="token-yaml-key">"clicks"</span>: <span class="token-val">0</span>,
+    <span class="token-yaml-key">"createdAt"</span>: <span class="token-string">"2026-09-11T10:30:00.000Z"</span>
+  }
+}</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">Error · POST /api/urls → 400</span><button onclick="copyCode(this)" class="code-copy-btn">copy</button></div>
+        <pre class="code-pre">{
+  <span class="token-yaml-key">"success"</span>: <span class="token-val">false</span>,
+  <span class="token-yaml-key">"message"</span>: <span class="token-string">"Please enter a valid URL starting with http:// or https://"</span>
+}</pre>
+      </div>
+
+      <div class="warning-box">
+        <div class="warning-box-icon">⚠️</div>
+        <p class="warning-box-text"><strong>Register <code>/:shortCode</code> last.</strong> It matches <em>any</em> one-segment path. If you later add a route like <code>GET /health</code> below it, Express will treat "health" as a short code and your new route will never run.</p>
+      </div>
+
+      <div class="quiz-box">
+        <p class="quiz-question">You add a <code style="background:transparent;border:none;color:#F4A261">GET /health</code> route below <code style="background:transparent;border:none;color:#F4A261">GET /:shortCode</code>. What happens when you visit /health?</p>
+        <div class="quiz-options" id="quiz-api-1">
+          <button onclick="answerQuiz('quiz-api-1', this, false)" class="quiz-option">A &nbsp;—&nbsp; The health route runs normally</button>
+          <button onclick="answerQuiz('quiz-api-1', this, true)" class="quiz-option">B &nbsp;—&nbsp; /:shortCode catches it first and shows the "link doesn't exist" page</button>
+        </div>
+        <div class="quiz-feedback hidden" id="quiz-api-1-feedback"></div>
+      </div>
+    </section>
+
+    <!-- 08 SCREEN -->
+    <section class="section-block animate-fade-up" id="screen">
+      <div class="section-header">
+        <div class="section-num-big">08</div>
+        <div class="section-header-text">
+          <div class="section-title">The screen</div>
+          <div class="section-subtitle">One page, four parts, top to bottom</div>
+        </div>
+      </div>
+
+      <div class="wire" aria-label="Wireframe of the URL Shortener page">
+        <div class="wire-part">
+          <span class="wire-num">1</span>
+          <div class="wire-h">Long links?</div>
+          <div class="wire-sub">Paste a link, get a short one, see how many people clicked it.</div>
+        </div>
+        <div class="wire-part">
+          <span class="wire-num">2</span>
+          <div class="wire-form"><div class="wire-input">Paste a long URL here…</div><div class="wire-btn">Shorten</div></div>
+        </div>
+        <div class="wire-part">
+          <span class="wire-num">3</span>
+          <div class="wire-result"><span>localhost:3000/aZ3kP9</span><span class="wire-mini">Copy</span></div>
+        </div>
+        <div class="wire-part">
+          <span class="wire-num">4</span>
+          <div style="font-family:'Fraunces',serif;font-weight:600;font-size:15px;margin-bottom:4px">Your links (3)</div>
+          <div class="wire-row"><span class="c">aZ3kP9</span><span class="o">example.com/blog/2026/09/how-to-learn-backend…</span><span class="k">5 clicks</span><span class="a wire-mini">Copy · Delete</span></div>
+          <div class="wire-row"><span class="c">Q7mR2x</span><span class="o">youtube.com/watch?v=backend-in-one-shot</span><span class="k">12 clicks</span><span class="a wire-mini">Copy · Delete</span></div>
+          <div class="wire-row" style="border-bottom:none"><span class="c">k9PzT1</span><span class="o">github.com/sheryians/url-shortener</span><span class="k">0 clicks</span><span class="a wire-mini">Copy · Delete</span></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="flag-table">
+          <thead><tr><th>Part</th><th>Component</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Hero (in <code>App.jsx</code>)</td><td>Heading and one-line subtitle</td></tr>
+            <tr><td>2</td><td><code>ShortenForm.jsx</code></td><td>Input and Shorten button; shows "Shortening…" while loading and the error message below</td></tr>
+            <tr><td>3</td><td><code>ResultCard.jsx</code></td><td>Appears after shortening, with the new link and a Copy button</td></tr>
+            <tr><td>4</td><td><code>UrlList.jsx</code></td><td>All links with clicks, date, Copy, and Delete; refreshes when you come back to the tab</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 09 STRUCTURE -->
+    <section class="section-block animate-fade-up" id="structure">
+      <div class="section-header">
+        <div class="section-num-big">09</div>
+        <div class="section-header-text">
+          <div class="section-title">Project structure</div>
+          <div class="section-subtitle">Every file has one job. If you know the job, you know the file.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">Folder tree</span><button onclick="copyCode(this)" class="code-copy-btn">copy</button></div>
+        <pre class="code-pre">url-shortener/
+├── backend/
+│   ├── src/
+│   │   ├── config/db.js                  <span class="token-comment"># connects to MongoDB</span>
+│   │   ├── models/url.model.js           <span class="token-comment"># shape of a link in the DB</span>
+│   │   ├── controllers/url.controller.js <span class="token-comment"># the logic</span>
+│   │   ├── routes/url.routes.js          <span class="token-comment"># which URL runs which logic</span>
+│   │   ├── utils/generateCode.js         <span class="token-comment"># makes the 6-char code</span>
+│   │   └── app.js                        <span class="token-comment"># Express setup</span>
+│   ├── server.js                         <span class="token-comment"># starts everything</span>
+│   ├── .env                              <span class="token-comment"># never pushed to GitHub</span>
+│   └── .env.example
+└── frontend/
+    └── src/
+        ├── api/urls.js                   <span class="token-comment"># all backend calls in one place</span>
+        ├── components/ShortenForm.jsx
+        ├── components/ResultCard.jsx
+        ├── components/UrlList.jsx
+        └── App.jsx</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">backend/.env.example</span><button onclick="copyCode(this)" class="code-copy-btn">copy</button></div>
+        <pre class="code-pre"><span class="token-yaml-key">PORT</span>=<span class="token-val">3000</span>
+<span class="token-yaml-key">MONGODB_URI</span>=<span class="token-string">mongodb://127.0.0.1:27017/url-shortener</span>
+<span class="token-yaml-key">BASE_URL</span>=<span class="token-string">http://localhost:3000</span>
+<span class="token-yaml-key">CLIENT_URL</span>=<span class="token-string">http://localhost:5173</span></pre>
+      </div>
+    </section>
+
+    <!-- 10 BUILD ORDER -->
+    <section class="section-block animate-fade-up" id="order">
+      <div class="section-header">
+        <div class="section-num-big">10</div>
+        <div class="section-header-text">
+          <div class="section-title">Build order</div>
+          <div class="section-subtitle">Your checklist for class. Tick each one as you finish it.</div>
+        </div>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <span class="progress-text" id="progress-text">0 of 12 done</span>
+      </div>
+
+      <h4>Backend</h4>
+      <ul class="check-list">
+        <li><label><input type="checkbox"><span>Create the <code>backend</code> folder, run <code>npm init -y</code>, and install <code>express mongoose cors dotenv</code> (plus <code>nodemon</code> as a dev dependency)</span></label></li>
+        <li><label><input type="checkbox"><span>Connect to MongoDB in <code>config/db.js</code> and start the server</span></label></li>
+        <li><label><input type="checkbox"><span>Write the model</span></label></li>
+        <li><label><input type="checkbox"><span>Write <code>generateCode</code></span></label></li>
+        <li><label><input type="checkbox"><span>Controller and route: <strong>create</strong>, then test in Postman</span></label></li>
+        <li><label><input type="checkbox"><span>Controller and route: <strong>get all</strong>, then test in Postman</span></label></li>
+        <li><label><input type="checkbox"><span>Controller and route: <strong>redirect</strong>, then test in the browser</span></label></li>
+        <li><label><input type="checkbox"><span>Controller and route: <strong>delete</strong>, then test in Postman</span></label></li>
+      </ul>
+
+      <h4>Frontend</h4>
+      <ul class="check-list">
+        <li><label><input type="checkbox"><span>Create the Vite React app and set up the axios instance in <code>api/urls.js</code></span></label></li>
+        <li><label><input type="checkbox"><span>Build the form and show the result card</span></label></li>
+        <li><label><input type="checkbox"><span>Build the list, then add Copy and Delete</span></label></li>
+      </ul>
+
+      <h4>Final test</h4>
+      <ul class="check-list">
+        <li><label><input type="checkbox"><span>Shorten a link, open it in a new tab, come back, and watch the click count go up</span></label></li>
+      </ul>
+
+      <div class="note-box all-done" id="all-done">
+        <div class="note-box-icon">🎉</div>
+        <p class="note-box-text"><strong>You built a full-stack app from scratch.</strong> Every part of it, from the database to the button, is yours. Pick a stretch goal below if you want more.</p>
+      </div>
+    </section>
+
+    <!-- 11 STRETCH -->
+    <section class="section-block animate-fade-up" id="stretch">
+      <div class="section-header">
+        <div class="section-num-big">11</div>
+        <div class="section-header-text">
+          <div class="section-title">Stretch goals</div>
+          <div class="section-subtitle">Only after everything in the checklist works</div>
+        </div>
+      </div>
+
+      <div class="stretch">
+        <span class="badge badge-gold">Optional</span>
+        <div><h3>Custom alias</h3><p>Let users choose <code>/my-notes</code> instead of a random code. You'll need to handle MongoDB's duplicate key error (code <code>11000</code>) when the alias is already taken.</p></div>
+      </div>
+      <div class="stretch">
+        <span class="badge badge-gold">Optional</span>
+        <div><h3>No duplicates</h3><p>If the same URL was already shortened, return the existing short link instead of creating a new one.</p></div>
+      </div>
+      <div class="stretch">
+        <span class="badge badge-gold">Optional</span>
+        <div><h3>Link expiry</h3><p>Add an <code>expiresAt</code> field and a TTL index so MongoDB deletes old links automatically.</p></div>
+      </div>
+      <div class="stretch" style="border-bottom:1px solid var(--rule)">
+        <span class="badge badge-gold">Optional</span>
+        <div><h3>QR code</h3><p>Show a QR code for each short link using the <code>qrcode.react</code> package.</p></div>
+      </div>
+    </section>
+
+    <!-- 12 GLOSSARY -->
+    <section class="section-block animate-fade-up" id="glossary">
+      <div class="section-header">
+        <div class="section-num-big">12</div>
+        <div class="section-header-text">
+          <div class="section-title">Glossary</div>
+          <div class="section-subtitle">Every new word in this project, in one line each</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="flag-table">
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Short code</td><td>The 6 characters at the end of the short link (<code>aZ3kP9</code>)</td></tr>
+            <tr><td>Redirect</td><td>The server telling the browser "don't show my response, go to this other URL instead"</td></tr>
+            <tr><td>302</td><td>HTTP status for a temporary redirect; the browser comes back to our server every time</td></tr>
+            <tr><td>Location header</td><td>The part of a redirect response that holds the URL the browser should go to</td></tr>
+            <tr><td><code>$inc</code></td><td>A MongoDB operator that increases a number directly inside the database, in one safe step</td></tr>
+            <tr><td>Index</td><td>A lookup table MongoDB keeps so it can find a document without checking every one</td></tr>
+            <tr><td>CORS</td><td>A browser rule that blocks a frontend from calling a different server unless that server allows it</td></tr>
+            <tr><td><code>.env</code></td><td>A file for config and secrets that is never pushed to GitHub</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>Sheryians Coding School · URL Shortener SRS v1.0</span>
+      <span>Mini project · No auth · MERN</span>
+    </footer>
+
+   </div>
+  </main>
+</div>
+
+<script>
+/* ── Copy code ── */
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'copied';
+    setTimeout(() => { btn.textContent = 'copy'; }, 1500);
+  });
+}
+
+/* ── Quiz ── */
+function answerQuiz(quizId, btn, isCorrect) {
+  const container = document.getElementById(quizId);
+  const feedback = document.getElementById(quizId + '-feedback');
+  container.querySelectorAll('.quiz-option').forEach(b => {
+    b.disabled = true;
+    b.style.opacity = '0.6';
+  });
+  if (isCorrect) {
+    btn.classList.add('correct');
+    feedback.textContent = '✓ Correct!';
+    feedback.className = 'quiz-feedback correct';
+  } else {
+    btn.classList.add('incorrect');
+    feedback.textContent = '✗ Not quite. Try reviewing that section.';
+    feedback.className = 'quiz-feedback incorrect';
+  }
+}
+
+/* ── Active nav link on scroll ── */
+(function () {
+  const links = document.querySelectorAll('.nav-link');
+  const sections = [...links].map(l => document.querySelector(l.getAttribute('href')));
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + entry.target.id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => s && observer.observe(s));
+})();
+
+/* ── Step-through: short link request ── */
+(function () {
+  const steps = [
+    { nodes: ['browser', 'express'], paths: ['p1'],
+      title: 'Someone opens the short link',
+      desc: 'The browser sends a normal GET request to our server.',
+      code: 'GET http://localhost:3000/aZ3kP9' },
+    { nodes: ['express'], paths: [],
+      title: 'Express matches /:shortCode',
+      desc: 'The route pattern captures the code from the URL, so req.params.shortCode is "aZ3kP9".',
+      code: "app.get('/:shortCode', redirectToOriginal)" },
+    { nodes: ['express', 'mongo'], paths: ['p3'],
+      title: 'Find the link and count the click',
+      desc: 'One query does both jobs: it finds the document and adds 1 to clicks inside MongoDB.',
+      code: 'Url.findOneAndUpdate({ shortCode }, { $inc: { clicks: 1 } })' },
+    { nodes: ['express', 'browser'], paths: ['p4'],
+      title: 'Send a 302 back',
+      desc: 'The server replies with status 302 and a Location header holding the original URL. No JSON, no page.',
+      code: 'res.redirect(302, url.originalUrl)' },
+    { nodes: ['browser', 'original'], paths: ['p5'],
+      title: 'The browser follows the Location header',
+      desc: 'The browser opens the original URL on its own. The user never sees our response, and the click count just went up by one.',
+      code: 'Location: https://www.example.com/blog/2026/09/...' }
+  ];
+  const allNodes = ['browser', 'express', 'mongo', 'original'];
+  const allPaths = ['p1', 'p3', 'p4', 'p5'];
+  const labels = { p4: 'l4', p5: 'l5' };
+  let i = 0;
+  const back = document.getElementById('st-back');
+  const next = document.getElementById('st-next');
+
+  function render() {
+    const s = steps[i];
+    allNodes.forEach(n => document.getElementById('n-' + n).classList.toggle('active', s.nodes.includes(n)));
+    allPaths.forEach(p => {
+      const el = document.getElementById(p);
+      const on = s.paths.includes(p);
+      el.classList.toggle('active', on);
+      el.setAttribute('marker-end', on ? 'url(#arr-on)' : 'url(#arr)');
+      if (labels[p]) document.getElementById(labels[p]).classList.toggle('active', on);
+    });
+    document.getElementById('st-title').textContent = s.title;
+    document.getElementById('st-desc').textContent = s.desc;
+    document.getElementById('st-code').textContent = s.code;
+    document.getElementById('st-count').textContent = 'Step ' + (i + 1) + ' of ' + steps.length;
+    back.disabled = i === 0;
+    next.disabled = i === steps.length - 1;
+  }
+  back.addEventListener('click', () => { if (i > 0) { i--; render(); } });
+  next.addEventListener('click', () => { if (i < steps.length - 1) { i++; render(); } });
+  render();
+})();
+
+/* ── Try it: URL validator (same rules as FR-2) ── */
+(function () {
+  const input = document.getElementById('val-input');
+  const rulesEl = document.getElementById('val-rules');
+  const verdict = document.getElementById('val-verdict');
+
+  function check(raw) {
+    const value = raw.trim();
+    const results = [];
+    const notEmpty = value.length > 0;
+    results.push({ label: 'Not empty', ok: notEmpty, msg: 'Please enter a URL' });
+    const shortEnough = value.length <= 2048;
+    results.push({ label: 'Not longer than 2048 characters', ok: shortEnough, msg: 'URL is too long' });
+    let parsed = null;
+    try { parsed = new URL(value); } catch (e) { parsed = null; }
+    results.push({ label: 'Can be read as a URL', ok: notEmpty && !!parsed, msg: 'Please enter a valid URL starting with http:// or https://' });
+    const goodProtocol = !!parsed && (parsed.protocol === 'http:' || parsed.protocol === 'https:');
+    results.push({ label: 'Starts with http:// or https://', ok: goodProtocol, msg: 'Please enter a valid URL starting with http:// or https://' });
+
+    rulesEl.innerHTML = '';
+    results.forEach(r => {
+      const li = document.createElement('li');
+      li.className = r.ok ? 'pass' : 'fail';
+      li.innerHTML = '<span class="mark">' + (r.ok ? '✓' : '✗') + '</span><span></span>';
+      li.lastChild.textContent = r.label;
+      rulesEl.appendChild(li);
+    });
+    const firstFail = results.find(r => !r.ok);
+    if (firstFail) {
+      verdict.className = 'verdict bad';
+      verdict.textContent = '400 · ' + firstFail.msg;
+    } else {
+      verdict.className = 'verdict ok';
+      verdict.textContent = '201 · The server would save this and create a short link';
+    }
+  }
+
+  document.getElementById('val-btn').addEventListener('click', () => check(input.value));
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') check(input.value); });
+  document.querySelectorAll('.chip[data-url]').forEach(chip => {
+    chip.addEventListener('click', () => { input.value = chip.dataset.url; check(chip.dataset.url); });
+  });
+})();
+
+/* ── Try it: short code generator (same idea as generateCode.js) ── */
+(function () {
+  const CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  document.getElementById('gen-btn').addEventListener('click', () => {
+    const nums = new Uint32Array(6);
+    crypto.getRandomValues(nums);
+    let code = '';
+    nums.forEach(n => { code += CHARS[n % CHARS.length]; });
+    document.getElementById('gen-code').textContent = code;
+    document.getElementById('gen-url').textContent = 'http://localhost:3000/' + code;
+  });
+})();
+
+/* ── Build-order checklist progress ── */
+(function () {
+  const boxes = document.querySelectorAll('.check-list input[type="checkbox"]');
+  const fill = document.getElementById('progress-fill');
+  const text = document.getElementById('progress-text');
+  const done = document.getElementById('all-done');
+  function update() {
+    const count = [...boxes].filter(b => b.checked).length;
+    fill.style.width = (count / boxes.length * 100) + '%';
+    text.textContent = count + ' of ' + boxes.length + ' done';
+    done.classList.toggle('show', count === boxes.length);
+  }
+  boxes.forEach(b => b.addEventListener('change', update));
+  update();
+})();
+</script>
+</body>
+</html>
