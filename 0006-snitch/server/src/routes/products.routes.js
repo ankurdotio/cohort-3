@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { createProductValidator } from "../validators/product.validator.js"
 import { authenticate } from "../middlewares/auth.middleware.js"
-import { createProduct } from "../controller/product.controller.js"
+import { createProduct, listAllProducts } from "../controller/product.controller.js"
 
 import multer from "multer"
 
@@ -46,6 +46,15 @@ router.post("/",
     },
     createProductValidator,
     createProduct)
+
+
+/**
+ * @method GET
+ * @route /api/product
+ * @description Read all the products from the DB
+ * @access user
+ */
+router.get("/", authenticate, listAllProducts)
 
 
 export default router
