@@ -1,7 +1,8 @@
 import { Router } from "express"
-import { createProductValidator } from "../validators/product.validator.js"
-import { authenticate } from "../middlewares/auth.middleware.js"
-import { createProduct, listAllProducts } from "../controller/product.controller.js"
+import { createProductValidator, unlistProductValidator, listProductValidator } from "../validators/product.validator.js"
+import { authenticate, authenticateSeller } from "../middlewares/auth.middleware.js"
+import { createProduct, listAllProducts, unlistProduct, listProduct, listAllProductsToSeller } from "../controller/product.controller.js"
+
 
 import multer from "multer"
 
@@ -28,14 +29,7 @@ router.post("/",
     // –––––––––––––– check is user authenticate ––––––––––––––––––––
     authenticate,
     // –––––––––––––– check the role is seller or not ––––––––––––––––––––
-    (req, res, next) => {
-        if (req.user.role !== "seller") {
-            return res.status(403).json({
-                message: "user is not authorize to create products"
-            })
-        }
-        next()
-    },
+    authenticateSeller,
     // –––––––––––––– required for reading the data from req.body if the formate is form-data(multipart-form-data) ––––––––––––––––––––
     upload.array("images"),
     // –––––––––––––– parse the complex data like object and array into json ––––––––––––––––––––
@@ -51,10 +45,39 @@ router.post("/",
 /**
  * @method GET
  * @route /api/product
- * @description Read all the products from the DB
+ * @description Read all the published products from the DB
  * @access user
  */
 router.get("/", authenticate, listAllProducts)
+
+
+
+/**
+ * @method GET
+ * @route /api/product/seller
+ * @description Read all the products from the DB
+ * @access seller
+ */
+router.get("/seller", authenticate, authenticateSeller, listAllProductsToSeller)
+
+
+
+/**
+ * @method PATCH
+ * @route /api/products/unlist/:id
+ * @description Unlist a product by its ID
+ * @access seller
+ */
+router.patch("/unlist/:id", authenticate, authenticateSeller, unlistProductValidator, unlistProduct)
+
+
+/**
+ * @method PATCH
+ * @route /api/products/unlist/:id
+ * @description list a product by its ID
+ * @access seller
+ */
+router.patch("/unlist/:id", authenticate, authenticateSeller, listProductValidator, listProduct)
 
 
 export default router
