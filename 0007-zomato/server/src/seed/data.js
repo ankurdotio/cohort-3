@@ -1,0 +1,215 @@
+// Static data used by seed.js. Prices are in rupees.
+
+// Approximate city centres. weight = share of users and restaurants.
+const CITIES = [
+  { name: "Bhopal", lat: 23.2599, lng: 77.4126, weight: 7, areas: ["MP Nagar", "Arera Colony", "New Market", "Kolar Road", "Indrapuri", "Bittan Market", "Habibganj", "Shahpura"] },
+  { name: "Indore", lat: 22.7196, lng: 75.8577, weight: 8, areas: ["Vijay Nagar", "Palasia", "Rajwada", "Sapna Sangeeta", "Bhawarkua", "Sarafa", "Nipania", "Rau"] },
+  { name: "Delhi", lat: 28.6139, lng: 77.209, weight: 18, areas: ["Connaught Place", "Hauz Khas", "Karol Bagh", "Lajpat Nagar", "Saket", "Rajouri Garden", "Chandni Chowk", "Dwarka"] },
+  { name: "Mumbai", lat: 19.076, lng: 72.8777, weight: 18, areas: ["Andheri West", "Bandra West", "Powai", "Colaba", "Lower Parel", "Malad", "Dadar", "Juhu"] },
+  { name: "Bengaluru", lat: 12.9716, lng: 77.5946, weight: 17, areas: ["Koramangala", "Indiranagar", "HSR Layout", "Whitefield", "Jayanagar", "MG Road", "Marathahalli", "BTM Layout"] },
+  { name: "Pune", lat: 18.5204, lng: 73.8567, weight: 11, areas: ["Koregaon Park", "Kothrud", "Baner", "Viman Nagar", "Hinjewadi", "Aundh", "Camp", "Shivajinagar"] },
+  { name: "Hyderabad", lat: 17.385, lng: 78.4867, weight: 13, areas: ["Banjara Hills", "Jubilee Hills", "Gachibowli", "Hitech City", "Kukatpally", "Secunderabad", "Madhapur", "Ameerpet"] },
+  { name: "Jaipur", lat: 26.9124, lng: 75.7873, weight: 8, areas: ["C-Scheme", "Malviya Nagar", "Vaishali Nagar", "MI Road", "Raja Park", "Mansarovar", "Bapu Bazaar", "Tonk Road"] },
+];
+
+// weight = how often a cuisine is a restaurant's main cuisine
+const CUISINES = [
+  { name: "North Indian", weight: 22 },
+  { name: "South Indian", weight: 14 },
+  { name: "Chinese", weight: 16 },
+  { name: "Biryani", weight: 14 },
+  { name: "Pizza", weight: 12 },
+  { name: "Street Food", weight: 12 },
+  { name: "Desserts", weight: 10 },
+];
+
+// [name, category, base price, isVeg]
+const DISHES = {
+  "North Indian": [
+    ["Paneer Butter Masala", "Main Course", 260, true],
+    ["Dal Makhani", "Main Course", 220, true],
+    ["Butter Chicken", "Main Course", 320, false],
+    ["Kadai Paneer", "Main Course", 250, true],
+    ["Chicken Tikka Masala", "Main Course", 310, false],
+    ["Chole Masala", "Main Course", 180, true],
+    ["Rajma Chawal", "Main Course", 160, true],
+    ["Mutton Rogan Josh", "Main Course", 420, false],
+    ["Palak Paneer", "Main Course", 240, true],
+    ["Malai Kofta", "Main Course", 250, true],
+    ["Paneer Tikka", "Starters", 240, true],
+    ["Chicken Tikka", "Starters", 280, false],
+    ["Tandoori Chicken (Half)", "Starters", 300, false],
+    ["Hara Bhara Kabab", "Starters", 190, true],
+    ["Butter Naan", "Breads", 50, true],
+    ["Garlic Naan", "Breads", 70, true],
+    ["Tandoori Roti", "Breads", 40, true],
+    ["Laccha Paratha", "Breads", 60, true],
+    ["Jeera Rice", "Rice", 150, true],
+    ["Veg Pulao", "Rice", 180, true],
+  ],
+  "South Indian": [
+    ["Masala Dosa", "Dosa", 120, true],
+    ["Plain Dosa", "Dosa", 90, true],
+    ["Mysore Masala Dosa", "Dosa", 140, true],
+    ["Rava Dosa", "Dosa", 130, true],
+    ["Ghee Roast Dosa", "Dosa", 160, true],
+    ["Paper Roast Dosa", "Dosa", 150, true],
+    ["Set Dosa", "Dosa", 110, true],
+    ["Onion Uttapam", "Dosa", 130, true],
+    ["Idli Sambar", "Idli & Vada", 80, true],
+    ["Medu Vada", "Idli & Vada", 90, true],
+    ["Pongal", "Main Course", 110, true],
+    ["Bisi Bele Bath", "Rice", 140, true],
+    ["Lemon Rice", "Rice", 120, true],
+    ["Curd Rice", "Rice", 110, true],
+    ["Appam with Veg Stew", "Main Course", 180, true],
+    ["Kerala Parotta", "Breads", 60, true],
+    ["Chicken Chettinad", "Main Course", 320, false],
+    ["Filter Coffee", "Beverages", 50, true],
+  ],
+  Chinese: [
+    ["Veg Hakka Noodles", "Noodles", 170, true],
+    ["Chicken Hakka Noodles", "Noodles", 210, false],
+    ["Veg Fried Rice", "Rice", 160, true],
+    ["Chicken Fried Rice", "Rice", 200, false],
+    ["Schezwan Fried Rice", "Rice", 180, true],
+    ["Veg Manchurian", "Starters", 190, true],
+    ["Chilli Paneer", "Starters", 230, true],
+    ["Chilli Chicken", "Starters", 260, false],
+    ["Chicken Lollipop", "Starters", 250, false],
+    ["Veg Spring Roll", "Starters", 150, true],
+    ["Honey Chilli Potato", "Starters", 170, true],
+    ["Veg Momos", "Momos", 120, true],
+    ["Chicken Momos", "Momos", 150, false],
+    ["Hot and Sour Soup", "Soups", 120, true],
+    ["Veg Manchow Soup", "Soups", 120, true],
+    ["Dragon Chicken", "Main Course", 270, false],
+    ["Paneer in Schezwan Sauce", "Main Course", 240, true],
+    ["American Chopsuey", "Noodles", 220, true],
+  ],
+  Biryani: [
+    ["Chicken Dum Biryani", "Biryani", 280, false],
+    ["Mutton Biryani", "Biryani", 380, false],
+    ["Hyderabadi Chicken Biryani", "Biryani", 300, false],
+    ["Veg Dum Biryani", "Biryani", 220, true],
+    ["Paneer Biryani", "Biryani", 240, true],
+    ["Egg Biryani", "Biryani", 200, false],
+    ["Lucknowi Mutton Biryani", "Biryani", 400, false],
+    ["Kolkata Chicken Biryani", "Biryani", 290, false],
+    ["Prawn Biryani", "Biryani", 420, false],
+    ["Chicken Biryani Family Pack", "Biryani", 600, false],
+    ["Chicken 65", "Starters", 240, false],
+    ["Chicken Seekh Kebab", "Starters", 260, false],
+    ["Mutton Seekh Kebab", "Starters", 320, false],
+    ["Mirchi ka Salan", "Sides", 80, true],
+    ["Boondi Raita", "Sides", 50, true],
+    ["Double ka Meetha", "Desserts", 120, true],
+  ],
+  Pizza: [
+    ["Margherita Pizza", "Pizza", 199, true],
+    ["Farmhouse Pizza", "Pizza", 299, true],
+    ["Peppy Paneer Pizza", "Pizza", 329, true],
+    ["Veggie Supreme Pizza", "Pizza", 359, true],
+    ["Corn and Cheese Pizza", "Pizza", 249, true],
+    ["Tandoori Paneer Pizza", "Pizza", 349, true],
+    ["Chicken Tikka Pizza", "Pizza", 379, false],
+    ["BBQ Chicken Pizza", "Pizza", 399, false],
+    ["Pepperoni Pizza", "Pizza", 429, false],
+    ["Garlic Bread", "Sides", 129, true],
+    ["Cheesy Garlic Bread", "Sides", 169, true],
+    ["Potato Wedges", "Sides", 119, true],
+    ["Penne Arrabbiata", "Pasta", 229, true],
+    ["White Sauce Pasta", "Pasta", 249, true],
+    ["Chicken Alfredo Pasta", "Pasta", 299, false],
+    ["Choco Lava Cake", "Desserts", 99, true],
+  ],
+  "Street Food": [
+    ["Pani Puri", "Chaat", 60, true],
+    ["Sev Puri", "Chaat", 70, true],
+    ["Bhel Puri", "Chaat", 60, true],
+    ["Dahi Puri", "Chaat", 80, true],
+    ["Papdi Chaat", "Chaat", 80, true],
+    ["Aloo Tikki Chaat", "Chaat", 80, true],
+    ["Raj Kachori", "Chaat", 100, true],
+    ["Vada Pav", "Snacks", 40, true],
+    ["Samosa (2 pcs)", "Snacks", 40, true],
+    ["Dabeli", "Snacks", 50, true],
+    ["Poha", "Snacks", 50, true],
+    ["Kachori Sabzi", "Snacks", 70, true],
+    ["Pav Bhaji", "Main Course", 140, true],
+    ["Misal Pav", "Main Course", 120, true],
+    ["Chole Bhature", "Main Course", 150, true],
+    ["Paneer Kathi Roll", "Rolls", 120, true],
+    ["Chicken Kathi Roll", "Rolls", 150, false],
+    ["Egg Roll", "Rolls", 90, false],
+  ],
+  Desserts: [
+    ["Gulab Jamun (2 pcs)", "Indian Sweets", 60, true],
+    ["Rasmalai", "Indian Sweets", 90, true],
+    ["Rasgulla (2 pcs)", "Indian Sweets", 60, true],
+    ["Gajar ka Halwa", "Indian Sweets", 110, true],
+    ["Moong Dal Halwa", "Indian Sweets", 130, true],
+    ["Jalebi with Rabdi", "Indian Sweets", 120, true],
+    ["Shahi Tukda", "Indian Sweets", 130, true],
+    ["Phirni", "Indian Sweets", 90, true],
+    ["Kaju Katli (250 g)", "Indian Sweets", 300, true],
+    ["Kesar Pista Kulfi", "Ice Cream & Kulfi", 80, true],
+    ["Kulfi Falooda", "Ice Cream & Kulfi", 140, true],
+    ["Brownie with Ice Cream", "Bakes", 160, true],
+    ["Mango Lassi", "Beverages", 90, true],
+    ["Rabdi", "Indian Sweets", 100, true],
+  ],
+};
+
+// Every restaurant also sells a few of these
+const BEVERAGES = [
+  ["Masala Chai", "Beverages", 40, true],
+  ["Sweet Lassi", "Beverages", 70, true],
+  ["Masala Chaas", "Beverages", 50, true],
+  ["Fresh Lime Soda", "Beverages", 70, true],
+  ["Cold Coffee", "Beverages", 120, true],
+  ["Coke (300 ml)", "Beverages", 40, true],
+];
+
+// Restaurant names are built as "<prefix> <suffix>"
+const NAME_PREFIXES = [
+  "Royal", "Shree", "Spice", "Desi", "Masala", "Golden", "Urban", "Annapurna", "Saffron",
+  "Zaika", "Swad", "Apna", "Grand", "Green Leaf", "Red Chilli", "Tadka", "Chatori", "Mirchi",
+  "Namaste", "Swagat", "Kesar", "Sharma's", "Gupta's", "Agarwal's", "Rao's", "Iyer's", "Nawab's",
+];
+
+const NAME_SUFFIXES = {
+  "North Indian": ["Dhaba", "Kitchen", "Rasoi", "Tandoor House", "Bhojanalaya", "Punjabi Kitchen"],
+  "South Indian": ["Udupi", "Dosa Corner", "Idli House", "Tiffin Centre", "Bhavan", "Cafe"],
+  Chinese: ["Wok", "Chinese Corner", "Noodle House", "Bamboo House", "Chopsticks"],
+  Biryani: ["Biryani House", "Biryani Point", "Handi", "Biryani Darbar", "Dum Biryani"],
+  Pizza: ["Pizzeria", "Pizza Co.", "Pizza Hub", "Crust", "Slice"],
+  "Street Food": ["Chaat Bhandar", "Chaat Corner", "Street Bites", "Pav Bhaji Centre", "Snacks Point"],
+  Desserts: ["Sweets", "Mithai Bhandar", "Dessert Bar", "Kulfi House", "Sweet Shop"],
+};
+
+// Order hours in Indian time. Peaks at lunch (12-2 pm) and dinner (7-10 pm).
+// Index = hour of day (0-23).
+const HOUR_WEIGHTS = [
+  1.2, 0.6, 0.3, 0.2, 0.2, 0.3, 0.6, 1.2, 2.5, 3, 3, 4.5,
+  9, 10, 8.5, 4, 3.5, 4, 5.5, 9, 11, 10.5, 7, 3,
+];
+
+const REVIEW_COMMENTS = {
+  1: ["Very disappointing. Food was cold.", "Order arrived very late and tasted stale.", "Too oily, will not order again.", "Wrong items delivered."],
+  2: ["Below average taste.", "Quantity was too less for the price.", "Packaging was bad, food spilled.", "Not worth the money."],
+  3: ["Okay okay, nothing special.", "Average taste, decent quantity.", "Food was fine but delivery was slow.", "Could be better."],
+  4: ["Tasty food, good quantity.", "Nice packaging and on-time delivery.", "Good value for money.", "Liked it, will order again."],
+  5: ["Loved it! Best in town.", "Absolutely delicious, ghar jaisa khana.", "Superb taste and very fresh.", "Perfect every single time!", "Paisa vasool!"],
+};
+
+module.exports = {
+  CITIES,
+  CUISINES,
+  DISHES,
+  BEVERAGES,
+  NAME_PREFIXES,
+  NAME_SUFFIXES,
+  HOUR_WEIGHTS,
+  REVIEW_COMMENTS,
+};
