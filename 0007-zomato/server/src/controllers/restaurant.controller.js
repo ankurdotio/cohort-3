@@ -14,7 +14,7 @@ function buildLocation(lng, lat) {
     longitude >= -180 && longitude <= 180 &&
     latitude >= -90 && latitude <= 90;
 
-  return isValid ? { type: "Point", coordinates: [longitude, latitude] } : null;
+  return isValid ? { type: "Point", coordinates: [ longitude, latitude ] } : null;
 }
 
 // GET /api/restaurants?page=1&limit=10&city=Bhopal
@@ -26,7 +26,7 @@ async function getRestaurants(req, res) {
     filter.city = String(req.query.city);
   }
 
-  const [restaurants, total] = await Promise.all([
+  const [ restaurants, total ] = await Promise.all([
     Restaurant.find(filter).sort({ name: 1, _id: 1 }).skip(skip).limit(limit),
     Restaurant.countDocuments(filter),
   ]);
@@ -74,10 +74,10 @@ async function updateRestaurant(req, res) {
   }
 
   // Only these fields can be changed
-  const allowedFields = ["name", "city", "area", "cuisines", "isOpen"];
+  const allowedFields = [ "name", "city", "area", "cuisines", "isOpen" ];
   for (const field of allowedFields) {
-    if (req.body[field] !== undefined) {
-      restaurant[field] = req.body[field];
+    if (req.body[ field ] !== undefined) {
+      restaurant[ field ] = req.body[ field ];
     }
   }
 

@@ -15,9 +15,11 @@ const orderItemSchema = new mongoose.Schema(
 const orderSchema = new mongoose.Schema(
   {
     customer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true },
+    restaurant: {
+      type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true
+    },
     items: {
-      type: [orderItemSchema],
+      type: [ orderItemSchema ],
       validate: {
         validator: (items) => items.length > 0,
         message: "An order needs at least one item",
@@ -26,12 +28,18 @@ const orderSchema = new mongoose.Schema(
     totalAmount: { type: Number, required: true, min: 0 },
     status: {
       type: String,
-      enum: ["placed", "preparing", "delivered", "cancelled"],
+      enum: [ "placed", "preparing", "delivered", "cancelled" ],
       default: "placed",
     },
-    paymentMethod: { type: String, enum: ["upi", "card", "cod"], default: "cod" },
+    paymentMethod: { type: String, enum: [ "upi", "card", "cod" ], default: "cod" },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-module.exports = mongoose.model("Order", orderSchema);
+orderSchema.index({ restaurant: 1 });
+
+const Order = mongoose.model("Order", orderSchema);
+
+
+
+module.exports = Order;

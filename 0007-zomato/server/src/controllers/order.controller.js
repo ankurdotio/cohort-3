@@ -4,12 +4,12 @@ const MenuItem = require("../models/menuItem.model");
 const getPagination = require("../utils/pagination");
 const findOwnedRestaurant = require("../utils/ownership");
 
-const PAYMENT_METHODS = ["upi", "card", "cod"];
+const PAYMENT_METHODS = [ "upi", "card", "cod" ];
 
 // Which status an order is allowed to move to next
 const NEXT_STATUSES = {
-  placed: ["preparing", "cancelled"],
-  preparing: ["delivered", "cancelled"],
+  placed: [ "preparing", "cancelled" ],
+  preparing: [ "delivered", "cancelled" ],
   delivered: [],
   cancelled: [],
 };
@@ -83,7 +83,7 @@ async function getMyOrders(req, res) {
   const { page, limit, skip } = getPagination(req.query);
   const filter = { customer: req.user.id };
 
-  const [orders, total] = await Promise.all([
+  const [ orders, total ] = await Promise.all([
     Order.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -108,14 +108,16 @@ async function getRestaurantOrders(req, res) {
     filter.status = String(req.query.status);
   }
 
-  const [orders, total] = await Promise.all([
+  console.time("getRestaurantOrders");
+  const [ orders, total ] = await Promise.all([
     Order.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("customer", "name"),
     Order.countDocuments(filter),
-  ]);
+  ])
+  console.timeEnd("getRestaurantOrders")
 
   res.json({ page, limit, total, totalPages: Math.ceil(total / limit), orders });
 }
@@ -136,7 +138,7 @@ async function updateOrderStatus(req, res) {
     return res.status(error.status).json({ message: error.message });
   }
 
-  const allowed = NEXT_STATUSES[order.status];
+  const allowed = NEXT_STATUSES[ order.status ];
   if (!allowed.includes(status)) {
     return res.status(400).json({
       message: `Cannot change status from "${order.status}" to "${status}". Allowed: ${allowed.join(", ") || "none"}`,
