@@ -1,0 +1,25 @@
+{
+  "name": "0008-payment-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/server.js",
+    "seed": "node ./src/seed/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "mongoose": "^9.11.1",
+    "morgan": "^1.12.1",
+    "razorpay": "^2.9.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

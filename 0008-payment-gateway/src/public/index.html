@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Document</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Razorpay Payment Gateway</h1>
+    <button id="payButton">Pay Now</button>
+
+    <script>
+
+        async function payNow() {
+
+            const response = await axios.post("http://localhost:3000/api/payments/6acd029071dedeefef06048a/order")
+            const { data } = response;
+
+
+            const rzp = new window.Razorpay({
+                key: data.keyId,
+                order_id: data.orderId,
+                amount: data.amount * 100,
+                currency: data.currency,
+                name: "Kapda Co.",
+                description: "Payment for order " + data.orderId,
+
+                // Step 9: Razorpay calls this with the three values
+                handler: async function (response) {
+                    // Step 10: hand them to OUR backend. The browser decides nothing.
+                    
+                    await axios.post("http://localhost:3000/api/payments/verify", {
+                        orderId: response.razorpay_order_id,
+                        paymentId: response.razorpay_payment_id,
+                        signature: response.razorpay_signature
+                    });
+
+                    console.log("Razorpay response:", response);
+                },
+            });
+
+            rzp.open();
+
+        }
+
+        document.getElementById("payButton").addEventListener("click", payNow);
+
+    </script>
+</body>
+</html>
