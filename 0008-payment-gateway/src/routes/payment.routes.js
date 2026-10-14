@@ -81,7 +81,6 @@ router.post("/verify", async (req, res) => {
      * write extra logic here if needed, such as notifying the user or updating related records.
      */
 
-    
 
     return res.status(200).json({ message: "Payment verified successfully" });
 })
