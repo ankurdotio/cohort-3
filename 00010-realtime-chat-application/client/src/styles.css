@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap') ;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap');
 
 :root {
   font-family: 'DM Sans', sans-serif;
@@ -17,11 +17,13 @@ body {
   margin: 0;
 }
 
-button, input {
+button,
+input {
   font: inherit;
 }
 
-button, a {
+button,
+a {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -38,7 +40,8 @@ a {
   color: inherit;
 }
 
-button:focus-visible, a:focus-visible {
+button:focus-visible,
+a:focus-visible {
   outline: 3px solid #91ac70;
   outline-offset: 4px;
 }
@@ -127,7 +130,7 @@ button:focus-visible, a:focus-visible {
   color: #758b50;
 }
 
-.story-content > p {
+.story-content>p {
   font-size: 15px;
   line-height: 1.85;
   color: #677566;
@@ -192,7 +195,7 @@ button:focus-visible, a:focus-visible {
   font-weight: 600;
 }
 
-.message-card div > span {
+.message-card div>span {
   display: block;
   font-size: 11px;
   opacity: .65;
@@ -420,7 +423,8 @@ input[aria-invalid="true"] {
   width: 18px;
 }
 
-.field-hint, .field-error {
+.field-hint,
+.field-error {
   display: block;
   font-size: 10px;
   margin-top: 8px;
@@ -453,7 +457,7 @@ input[aria-invalid="true"] {
   background: #243e2e;
 }
 
-.primary-button > span {
+.primary-button>span {
   position: absolute;
   right: 18px;
   font-size: 19px;
@@ -577,7 +581,7 @@ input[aria-invalid="true"] {
   padding: 0 24px;
 }
 
-.account-content > h1 {
+.account-content>h1 {
   font-family: 'Manrope', sans-serif;
   font-size: 46px;
   letter-spacing: -2px;
@@ -637,7 +641,7 @@ dl {
   margin: 0;
 }
 
-dl > div {
+dl>div {
   margin-bottom: 23px;
 }
 
@@ -678,15 +682,91 @@ dd {
   color: #98a08b;
 }
 
+.chat-page {
+  display: flex;
+  justify-content: center;
+
+  .conversation-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    position: relative;
+
+    width: min(100%, 640px);
+    height: 100vh;
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+      padding-bottom: 4rem;
+      scroll-behavior: smooth;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+
+
+
+      .message {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background: #d1cece;
+        width: fit-content;
+        padding: 8px 12px;
+        border-radius: 8px;
+      }
+
+      .outgoing {
+        align-self: flex-end;
+        background: #627a48;
+        color: #fcfcf8;
+      }
+    }
+
+
+    .input-area {
+      position: fixed;
+      display: flex;
+      bottom: 0.4rem;
+      width: min(100%, 640px);
+      display: flex;
+      gap: 0.5rem;
+
+      input {
+        flex: 1;
+        max-width: 100%;
+      }
+
+      button {
+        flex: 0 0 auto;
+        max-width: 100%;
+        border-radius: 8px;
+        background: #627a48;
+        color: #fcfcf8;
+        border: none;
+        padding-inline: 2rem;
+      }
+    }
+  }
+}
+
 @media (min-width: 1500px) {
   .story-panel {
     padding-left: 70px;
   }
+
   .story-content {
     max-width: 530px;
     margin-left: auto;
     margin-right: auto;
   }
+
   .conversation-art {
     margin-top: 40px;
   }
@@ -697,23 +777,29 @@ dd {
     padding-left: 28px;
     padding-right: 28px;
   }
+
   .story-content h1 {
     letter-spacing: -2px;
   }
+
   .form-panel {
     padding-left: 25px;
     padding-right: 25px;
   }
+
   .message-card {
     min-width: 250px;
     padding: 15px;
   }
+
   .message-two {
     right: -10px;
   }
+
   .art-orbit {
     left: 10px;
   }
+
   .orbit-two {
     left: 42px;
   }
@@ -724,34 +810,44 @@ dd {
     display: block;
     padding: 0;
   }
+
   .story-panel {
     display: none;
   }
+
   .form-panel {
     min-height: 100vh;
     padding: 25px 24px;
   }
+
   .mobile-brand {
     display: block;
   }
+
   .form-panel-top {
     display: none;
   }
+
   .form-content {
     padding: 45px 0;
   }
+
   .form-content h2 {
     font-size: 34px;
   }
+
   .account-header {
     padding: 22px 24px;
   }
+
   .account-content {
     margin: 45px auto;
   }
-  .account-content > h1 {
+
+  .account-content>h1 {
     font-size: 37px;
   }
+
   .profile-card {
     padding: 23px;
   }

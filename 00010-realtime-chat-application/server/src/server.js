@@ -2,10 +2,16 @@ import mongoose from 'mongoose';
 import { app } from './app.js';
 import { env } from './config/env.js';
 import { connectDB } from './config/db.js';
+import initSocketServer from './sockets/socket.server.js';
+import { createServer } from 'http';
 
 try {
   await connectDB();
-  const server = app.listen(env.port, () => {
+
+  const httpServer = createServer(app);
+  initSocketServer(httpServer);
+
+  const server = httpServer.listen(env.port, () => {
     console.log(`API listening on http://localhost:${env.port}`);
   });
 

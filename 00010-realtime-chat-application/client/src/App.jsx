@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import AccountPage from './pages/AccountPage.jsx';
 import Brand from './components/Brand.jsx';
+import ChatPage from './pages/ChatPage.jsx';
 
 function ProtectedRoute({ children }) {
   const { user, error } = useSelector((state) => state.auth);
@@ -66,6 +67,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <AccountPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRoute>
+            <ChatPage />
           </ProtectedRoute>
         }
       />
