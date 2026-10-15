@@ -26,9 +26,9 @@ export default function (httpServer) {
     })
 
     io.on('connection', (socket) => {
+        socket.on("message", (msg) => {
 
-        console.log('Authenticated user:', socket.user);
-
-        console.log('A user connected:', socket.id);
+            socket.broadcast.emit("message", { ...msg, email: socket.user.email })
+        })
     })
 }

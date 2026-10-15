@@ -703,6 +703,8 @@ dd {
       overflow-y: auto;
       padding-bottom: 4rem;
       scroll-behavior: smooth;
+      padding:1rem;
+      padding-bottom:4rem;
 
       &::-webkit-scrollbar {
         width: 8px;
