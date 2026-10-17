@@ -1,0 +1,28 @@
+{
+  "name": "00011-google-oauth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/server.js",
+  "dependencies": {
+    "daemon": "^1.1.0",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "init": "^0.1.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.2",
+    "morgan": "^1.12.1",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
