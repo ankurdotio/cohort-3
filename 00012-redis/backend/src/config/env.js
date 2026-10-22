@@ -22,6 +22,7 @@ if (process.env.ACCESS_TOKEN_SECRET === process.env.REFRESH_TOKEN_SECRET) {
   throw new Error("ACCESS_TOKEN_SECRET and REFRESH_TOKEN_SECRET must differ");
 }
 
+
 /**
  * Validated, immutable application configuration.
  * @type {Readonly<{
