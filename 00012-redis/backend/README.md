@@ -107,3 +107,49 @@ Header: `Authorization: Bearer <accessToken>`
 `200`: `{ "success": true, "message": "Current user", "data": { "user": { "id": "...", "name": "Ankur", "email": "ankur@example.com", "createdAt": "...", "updatedAt": "..." } } }`
 
 `401`: `{ "success": false, "message": "Authentication required", "errors": [] }`
+
+## Posts (`/api/posts`)
+
+A post has `user` (author ref), `caption`, `likes` (count, default `0`), `createdAt` and `updatedAt`.
+
+### `POST /api/posts` (protected)
+
+Header: `Authorization: Bearer <accessToken>`
+
+```json
+{ "caption": "Hello Redis" }
+```
+
+`201`:
+
+```json
+{
+  "success": true,
+  "message": "Post created",
+  "data": {
+    "post": { "id": "...", "user": { "id": "...", "name": "Ankur" }, "caption": "Hello Redis", "likes": 0, "createdAt": "...", "updatedAt": "..." }
+  }
+}
+```
+
+`401`: `{ "success": false, "message": "Authentication required", "errors": [] }`
+
+`422`: `{ "success": false, "message": "Validation failed", "errors": [{ "field": "caption", "message": "Caption is required" }] }`
+
+### `GET /api/posts/:postId/details` (public)
+
+`200`: `{ "success": true, "message": "Post details", "data": { "post": { ... } } }`
+
+`422`: `{ "success": false, "message": "Validation failed", "errors": [{ "field": "postId", "message": "Invalid post id" }] }`
+
+`404`: `{ "success": false, "message": "Post not found", "errors": [] }`
+
+## Seeding 1 million posts
+
+```bash
+npm run seed:posts                                   # 1,000,000 posts across 1,000 seed users
+npm run seed:posts -- --reset                        # delete all posts first
+npm run seed:posts -- --count=50000 --users=100 --batch=5000 --concurrency=4
+```
+
+Seed users are upserted, so re-running is safe. Log in as `seed-user-<n>@example.com` / `Password123`.
