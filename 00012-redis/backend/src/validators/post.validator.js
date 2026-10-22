@@ -19,3 +19,9 @@ export const createPostValidator = [
 export const postIdValidator = [
   param("postId").isMongoId().withMessage("Invalid post id"),
 ];
+
+/**
+ * Validation chain for `PATCH /api/posts/:postId/update`.
+ * @type {import("express-validator").ValidationChain[]}
+ */
+export const updatePostValidator = [...postIdValidator, ...createPostValidator];

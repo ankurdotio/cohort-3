@@ -22,6 +22,16 @@ npm start              # production
 | `MONGODB_URI` | MongoDB connection string |
 | `ACCESS_TOKEN_SECRET` | Secret for 15-minute access tokens |
 | `REFRESH_TOKEN_SECRET` | Different secret for 7-day refresh tokens |
+| `WEB_CONCURRENCY` | Optional worker process count (default: number of CPU cores, capped at 5) |
+
+## Multi-core clustering
+
+`src/server.js` uses Node's built-in `cluster` module. The primary process forks one worker per CPU core (`os.availableParallelism()`, or `WEB_CONCURRENCY`), up to a maximum of 5, and every worker connects to MongoDB and shares the same port.
+
+- A worker that crashes after starting is replaced automatically.
+- If a worker fails during startup (for example, MongoDB is unreachable), the whole cluster shuts down instead of restarting in a loop.
+- `SIGINT`/`SIGTERM` stops every worker gracefully: it stops accepting connections, finishes in-flight requests, disconnects MongoDB, and force-exits after 10s.
+- Workers keep no shared in-memory state; anything shared (cache, sessions, rate limits) must live in MongoDB or Redis.
 
 ## Vite dev proxy
 
@@ -141,6 +151,20 @@ Header: `Authorization: Bearer <accessToken>`
 `200`: `{ "success": true, "message": "Post details", "data": { "post": { ... } } }`
 
 `422`: `{ "success": false, "message": "Validation failed", "errors": [{ "field": "postId", "message": "Invalid post id" }] }`
+
+`404`: `{ "success": false, "message": "Post not found", "errors": [] }`
+
+### `PATCH /api/posts/:postId/update` (public)
+
+Updates only the caption, then deletes the cached `post:<postId>` key from Redis so the next `/details` call reads fresh data.
+
+```json
+{ "caption": "Updated caption" }
+```
+
+`200`: `{ "success": true, "message": "Post updated", "data": { "post": { ... } } }`
+
+`422`: `{ "success": false, "message": "Validation failed", "errors": [{ "field": "caption", "message": "Caption is required" }] }`
 
 `404`: `{ "success": false, "message": "Post not found", "errors": [] }`
 

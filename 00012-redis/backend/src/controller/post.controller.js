@@ -1,4 +1,4 @@
-import { createPost, findPostByIdWithAuthor } from "../DAO/post.dao.js";
+import { createPost, findPostByIdWithAuthor, updatePostCaption } from "../DAO/post.dao.js";
 import { sendSuccess } from "../utils/apiResponse.js";
 import { AppError } from "../utils/AppError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -75,4 +75,22 @@ export const getPostDetails = asyncHandler(async (req, res) => {
   await redis.set(`post:${req.params.postId}`, JSON.stringify(toPublicPost(post)));
 
   sendSuccess(res, 200, "Post details", { post: toPublicPost(post) });
+});
+
+/**
+ * PATCH /api/posts/:postId/update — updates a post's caption and invalidates its cached details.
+ * @param {import("express").Request} req - Params: `{ postId }`; body: `{ caption }`.
+ * @param {import("express").Response} res - 200 with `{ post }`.
+ * @returns {Promise<void>}
+ * @throws {AppError} 404 when the post does not exist.
+ */
+export const updatePostHandler = asyncHandler(async (req, res) => {
+  const postId = String(req.params.postId);
+
+  const post = await updatePostCaption(postId, req.body.caption);
+  if (!post) throw new AppError(404, "Post not found");
+
+  await redis.del(`post:${postId}`);
+
+  sendSuccess(res, 200, "Post updated", { post: toPublicPost(post) });
 });

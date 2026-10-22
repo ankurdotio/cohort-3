@@ -25,3 +25,16 @@ export const findPostByIdWithAuthor = async (id) => {
   const post = await PostModel.findById(id).populate("user", "name").lean();
   return /** @type {PostWithAuthor | null} */ (/** @type {unknown} */ (post));
 };
+
+/**
+ * Updates a post's caption and returns the updated post with its author populated.
+ * @param {string} id - Post id.
+ * @param {string} caption - New caption.
+ * @returns {Promise<PostWithAuthor | null>} The updated post or null if it does not exist.
+ */
+export const updatePostCaption = async (id, caption) => {
+  const post = await PostModel.findByIdAndUpdate(id, { caption }, { new: true, runValidators: true })
+    .populate("user", "name")
+    .lean();
+  return /** @type {PostWithAuthor | null} */ (/** @type {unknown} */ (post));
+};
