@@ -3,8 +3,9 @@ import dotenv from "dotenv"
 import rl from "readline/promises"
 import { tool, createAgent } from "langchain"
 import * as z from "zod"
-dotenv.config()
+import { StateGraph, START, END } from "@langchain/langgraph"
 
+dotenv.config()
 
 const events = []
 
@@ -35,12 +36,12 @@ const getEventsTool = tool(
     async function ({ }) {
         console.log("Retrieving events:", events)
         return events
-    }, {
-    name: "getEvents",
-    description: "Retrieves all events",
-    schema: z.object({})
-}
-)
+    },
+    {
+        name: "getEvents",
+        description: "Retrieves all events",
+        schema: z.object({})
+    })
 
 const readline = rl.createInterface({
     input: process.stdin,
@@ -54,27 +55,40 @@ const model = new ChatGroq({
 })
 
 
-const agent = createAgent({
-    model,
-    tools: [ createEventTool, getEventsTool ]
+// –––––––––––––––– LLM Node –––––––––––––––– 
+async function LLMNode(state) {
+    console.log("LLMNode state:", state)
+
+    return {
+        messages: [
+            ...state.messages,
+            {
+                role: "assistant",
+                content: "Hello, user!"
+            }
+        ]
+    }
+}
+
+
+const graph = new StateGraph(
+    z.object({
+        messages: z.array(z.any())
+    }))
+    .addNode("LLMNode", LLMNode)
+    .addEdge(START, "LLMNode")
+    .addEdge("LLMNode", END)
+    .compile()
+
+
+
+const graphResult = await graph.invoke({
+    messages: [
+        {
+            role: "user",
+            content: "Hello, world!"
+        }
+    ]
 })
 
-while (true) {
-
-    const userInput = await readline.question("Enter your input: ")
-
-    const stream = await agent.stream({
-        messages: [
-            {
-                role: "user",
-                content: userInput
-            },
-        ]
-    }, { streamMode: "messages" })
-
-    for await (const [ chunk ] of stream) {
-        process.stdout.write(chunk.content)
-    }
-
-    process.stdout.write("\n")
-}
+console.log("Graph result:", graphResult)
