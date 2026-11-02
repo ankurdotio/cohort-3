@@ -1,6 +1,6 @@
 import { getSettingsFile, saveApiKey, getApiKey } from "./utils/file.utils.js"
 import rl from "./utils/readline.js"
-import initGraph from "./graph/graph.js"
+import initGraph from "./ai/graph/graph.js"
 
 async function main() {
     const settings = await getSettingsFile()
