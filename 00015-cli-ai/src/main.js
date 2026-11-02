@@ -20,8 +20,6 @@ async function main() {
         return main()
     }
 
-    const apiKey = response.apiKey
-
     await initGraph()
 
     rl.close()
