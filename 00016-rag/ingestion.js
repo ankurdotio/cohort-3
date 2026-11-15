@@ -59,4 +59,3 @@ await index.documents.upsert({
         }
     })
 })
-
