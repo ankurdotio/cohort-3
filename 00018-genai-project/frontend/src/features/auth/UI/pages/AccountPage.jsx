@@ -21,7 +21,7 @@ export function AccountPage() {
         </div>
         <div className="mb-6"><ErrorMessage>{error}</ErrorMessage></div>
         <div className="grid gap-6 md:grid-cols-[1fr_1.15fr]">
-          <section className="rounded-2xl border border-line bg-white p-7 sm:p-8">
+          <section className="rounded-2xl border border-line bg-surface p-7 sm:p-8">
             <div className="flex items-center justify-between">
               <span className="flex size-12 items-center justify-center rounded-full bg-sage font-display text-xl font-semibold text-forest">
                 {user.name.slice(0, 1).toUpperCase()}
@@ -46,7 +46,7 @@ export function AccountPage() {
             <div>
               <div className="flex items-center justify-between">
                 <Sparkles className="text-forest" size={25} strokeWidth={1.5} />
-                <span className="rounded-full border border-[#bdcbbf] px-3 py-1.5 text-[10px] font-medium tracking-wide text-forest uppercase">On the horizon</span>
+                <span className="rounded-full border border-chip-line px-3 py-1.5 text-[10px] font-medium tracking-wide text-forest uppercase">On the horizon</span>
               </div>
               <h2 className="mt-9 max-w-xs font-display text-3xl leading-tight font-semibold tracking-[-1px]">One space.<br />More perspectives.</h2>
               <p className="mt-5 max-w-sm text-sm leading-7 text-muted">
@@ -54,7 +54,7 @@ export function AccountPage() {
               </p>
               <div className="mt-7 flex flex-wrap gap-2">
                 {['Gemini', 'ChatGPT', 'Claude'].map((model) => (
-                  <span key={model} className="rounded-full border border-[#bdcbbf] px-3 py-1.5 text-xs text-forest">{model}</span>
+                  <span key={model} className="rounded-full border border-chip-line px-3 py-1.5 text-xs text-forest">{model}</span>
                 ))}
               </div>
             </div>

@@ -3,7 +3,7 @@ import { Brand } from './Brand.jsx';
 export function PageShell({ children, headerAction }) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <a href="#main" className="sr-only z-50 rounded bg-forest p-3 text-white focus:not-sr-only focus:absolute">
+      <a href="#main" className="sr-only z-50 rounded bg-forest p-3 text-on-forest focus:not-sr-only focus:absolute">
         Skip to content
       </a>
       <header className="mx-auto flex w-full max-w-[1360px] items-center justify-between gap-6 px-6 py-7 sm:px-10 lg:px-14">

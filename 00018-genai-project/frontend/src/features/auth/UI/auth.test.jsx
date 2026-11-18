@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import App from '../../../app/App.jsx';
+import { routes } from '../../../app/routes.jsx';
 import authReducer, { sessionCleared, sessionReceived } from '../State/auth.slice.js';
 import { authApi } from '../Hooks/session.js';
 
@@ -21,7 +21,8 @@ const session = {
 function setup(path = '/login', authenticated = false) {
   const store = configureStore({ reducer: { auth: authReducer } });
   store.dispatch(authenticated ? sessionReceived(session) : sessionCleared());
-  render(<Provider store={store}><MemoryRouter initialEntries={[path]}><App /></MemoryRouter></Provider>);
+  const router = createMemoryRouter(routes, { initialEntries: [path] });
+  render(<Provider store={store}><RouterProvider router={router} /></Provider>);
   return { user: userEvent.setup(), store };
 }
 

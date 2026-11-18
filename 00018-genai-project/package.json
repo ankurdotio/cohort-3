@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "workspaces": ["backend", "frontend"],
-  "engines": { "node": ">=22.12.0" },
+  "engines": { "node": ">=22.22.0" },
   "scripts": {
     "dev": "concurrently -k -n api,web \"npm run dev -w backend\" \"npm run dev -w frontend\"",
     "build": "npm run build -w frontend",

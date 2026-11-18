@@ -15,10 +15,10 @@
     "@reduxjs/toolkit": "^2.9.2",
     "axios": "^1.13.2",
     "lucide-react": "^0.468.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.9.5"
+    "react-router": "^8.5.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",

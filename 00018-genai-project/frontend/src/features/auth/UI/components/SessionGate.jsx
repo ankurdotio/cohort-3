@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../../Hooks/useAuth.js';
 import { PageShell } from './PageShell.jsx';
 import { ErrorMessage, Spinner } from './Feedback.jsx';

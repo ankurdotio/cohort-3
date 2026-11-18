@@ -4,15 +4,59 @@
   --font-sans: "Inter", sans-serif;
   --font-display: "Plus Jakarta Sans", sans-serif;
   --color-canvas: #faf8f5;
+  --color-surface: #ffffff;
   --color-ink: #1a1a18;
   --color-muted: #5b655c;
   --color-forest: #1b382b;
+  --color-forest-hover: #112a1e;
+  --color-on-forest: #ffffff;
   --color-sage: #e5ede3;
   --color-line: #dce0d7;
   --color-error: #a33127;
+  --color-error-soft: #fff1ed;
+  --color-error-line: #e7c7c1;
+  --color-field: #fdfcf9;
+  --color-field-line: #cdd3c8;
+  --color-placeholder: #7b8178;
+  --color-chip-line: #bdcbbf;
+  --color-art-back: #d7dfd2;
+  --color-art-mid: #edf1e9;
+  --color-art-card: #fafcf7;
+  --color-art-line: #cbd6cc;
+  --color-bar-strong: #aab9a7;
+  --color-bar-soft: #d9e1d5;
+}
+
+/* Tailwind utilities read these variables, so overriding them re-themes the whole UI. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #111412;
+    --color-surface: #181d1a;
+    --color-ink: #ecefe9;
+    --color-muted: #a3ada4;
+    --color-forest: #a9d1b4;
+    --color-forest-hover: #c2e0ca;
+    --color-on-forest: #10241a;
+    --color-sage: #1c2a22;
+    --color-line: #2b332e;
+    --color-error: #f1998e;
+    --color-error-soft: #2a1715;
+    --color-error-line: #5a2b26;
+    --color-field: #151a17;
+    --color-field-line: #39433c;
+    --color-placeholder: #7d877f;
+    --color-chip-line: #3d5144;
+    --color-art-back: #2a3a30;
+    --color-art-mid: #22302a;
+    --color-art-card: #18201b;
+    --color-art-line: #34443a;
+    --color-bar-strong: #5f7a66;
+    --color-bar-soft: #2f3e35;
+  }
 }
 
 @layer base {
+  :root { color-scheme: light dark; }
   body { @apply m-0 bg-canvas font-sans text-ink antialiased; }
   button, a, input { -webkit-tap-highlight-color: transparent; }
   button:not(:disabled), a { cursor: pointer; }
@@ -24,10 +68,10 @@
 @layer components {
   .eyebrow { @apply text-[10px] font-semibold tracking-[0.18em] text-forest uppercase; }
   .form-input {
-    @apply h-[52px] w-full rounded-lg border border-[#cdd3c8] bg-[#fdfcf9] px-4 text-sm text-ink transition-colors placeholder:text-[#7b8178] focus:border-forest focus:bg-white focus:outline-2 focus:outline-offset-2 focus:outline-forest;
+    @apply h-[52px] w-full rounded-lg border border-field-line bg-field px-4 text-sm text-ink transition-colors placeholder:text-placeholder focus:border-forest focus:bg-surface focus:outline-2 focus:outline-offset-2 focus:outline-forest;
   }
   .button-primary {
-    @apply inline-flex min-h-[52px] items-center justify-center gap-3 rounded-lg bg-forest px-5 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-[#112a1e] disabled:opacity-60;
+    @apply inline-flex min-h-[52px] items-center justify-center gap-3 rounded-lg bg-forest px-5 py-3 text-[13px] font-semibold text-on-forest transition-colors hover:bg-forest-hover disabled:opacity-60;
   }
   .button-secondary {
     @apply inline-flex min-h-11 items-center justify-center rounded-lg border border-line bg-transparent py-2 font-medium text-forest transition-colors hover:bg-sage disabled:opacity-60;

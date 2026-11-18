@@ -6,7 +6,7 @@ No chat, OAuth, email verification, or password-reset functionality is implement
 
 ## Run locally
 
-Requirements: Node.js **22.12+** and MongoDB. The backend itself uses plain JavaScript
+Requirements: Node.js **22.22+** and MongoDB. The backend itself uses plain JavaScript
 ES modules; the Node minimum accommodates the frontend tooling.
 
 ```sh
@@ -127,5 +127,10 @@ stacked-card artwork, and generous split layout. Registration and account views
 share that visual language. Tailwind CSS styles the implementation; fonts are
 self-hosted. AI model names on the account page describe the future direction,
 not available integrations.
+
+Light and dark themes follow the operating system's `prefers-color-scheme`
+setting automatically. All colors are semantic tokens in
+`frontend/src/styles.css`; the dark palette overrides those tokens in one media
+query, so components never hard-code colors.
 
 See [backend API documentation](./backend/README.md) for all request/response examples.

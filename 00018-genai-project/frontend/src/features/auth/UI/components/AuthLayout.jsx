@@ -4,9 +4,9 @@ import { PageShell } from './PageShell.jsx';
 function ConversationArtwork() {
   return (
     <div aria-hidden="true" className="relative mx-auto mt-12 w-full max-w-[390px] px-3 pb-3 pt-7">
-      <div className="absolute inset-x-10 top-0 h-28 rounded-2xl border border-[#cad4c9] bg-[#d7dfd2]" />
-      <div className="absolute inset-x-6 top-3 h-28 rounded-2xl border border-[#cbd6cc] bg-[#edf1e9]" />
-      <div className="relative rounded-2xl border border-[#d4ddd1] bg-[#fafcf7] p-6">
+      <div className="absolute inset-x-10 top-0 h-28 rounded-2xl border border-art-line bg-art-back" />
+      <div className="absolute inset-x-6 top-3 h-28 rounded-2xl border border-art-line bg-art-mid" />
+      <div className="relative rounded-2xl border border-art-line bg-art-card p-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-medium text-forest">
             <Sparkles size={16} /> A fresh perspective
@@ -14,9 +14,9 @@ function ConversationArtwork() {
           <span className="size-6 rounded-full bg-sage p-1 text-forest"><ArrowDown size={16} /></span>
         </div>
         <div className="space-y-2.5">
-          <div className="h-2 w-[88%] rounded-full bg-[#aab9a7]" />
-          <div className="h-2 w-[96%] rounded-full bg-[#d9e1d5]" />
-          <div className="h-2 w-[62%] rounded-full bg-[#d9e1d5]" />
+          <div className="h-2 w-[88%] rounded-full bg-bar-strong" />
+          <div className="h-2 w-[96%] rounded-full bg-bar-soft" />
+          <div className="h-2 w-[62%] rounded-full bg-bar-soft" />
         </div>
         <div className="mt-7 flex gap-2">
           {['Explore', 'Reflect', 'Create'].map((label) => (
@@ -44,7 +44,7 @@ export function AuthLayout({ children }) {
           </div>
           <ConversationArtwork />
           <div className="mt-9 flex items-center gap-3 text-[11px] text-muted">
-            <span className="h-px w-8 bg-[#aab9a7]" />
+            <span className="h-px w-8 bg-bar-strong" />
             A little room for what comes next.
           </div>
         </section>
