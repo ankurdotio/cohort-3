@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --color-canvas: #faf8f5;
+  --color-ink: #1a1a18;
+  --color-muted: #5b655c;
+  --color-forest: #1b382b;
+  --color-sage: #e5ede3;
+  --color-line: #dce0d7;
+  --color-error: #a33127;
+}
+
+@layer base {
+  body { @apply m-0 bg-canvas font-sans text-ink antialiased; }
+  button, a, input { -webkit-tap-highlight-color: transparent; }
+  button:not(:disabled), a { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  :focus-visible { @apply outline-2 outline-offset-4 outline-forest; }
+  ::selection { @apply bg-sage text-forest; }
+}
+
+@layer components {
+  .eyebrow { @apply text-[10px] font-semibold tracking-[0.18em] text-forest uppercase; }
+  .form-input {
+    @apply h-[52px] w-full rounded-lg border border-[#cdd3c8] bg-[#fdfcf9] px-4 text-sm text-ink transition-colors placeholder:text-[#7b8178] focus:border-forest focus:bg-white focus:outline-2 focus:outline-offset-2 focus:outline-forest;
+  }
+  .button-primary {
+    @apply inline-flex min-h-[52px] items-center justify-center gap-3 rounded-lg bg-forest px-5 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-[#112a1e] disabled:opacity-60;
+  }
+  .button-secondary {
+    @apply inline-flex min-h-11 items-center justify-center rounded-lg border border-line bg-transparent py-2 font-medium text-forest transition-colors hover:bg-sage disabled:opacity-60;
+  }
+  .text-link { @apply rounded-sm font-semibold text-forest underline-offset-4 hover:underline disabled:opacity-60; }
+}

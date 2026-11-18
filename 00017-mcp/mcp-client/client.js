@@ -20,6 +20,3 @@ const adapter = new MCPAdapter({
 const tools = await adapter.listTools();
 
 console.log("Available tools:", tools);
-
-
-
