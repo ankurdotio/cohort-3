@@ -1,5 +1,5 @@
 import { ChatGroq } from "@langchain/groq"
-import { env } from '../config/env.js';
+import { env } from '../../config/env.js';
 
 
 const model = new ChatGroq({
