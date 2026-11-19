@@ -14,8 +14,9 @@ import { sendSuccess } from '../utils/apiResponse.js';
 export async function handleMessage(req, res) {
 
     const { content, conversation } = req.body;
+    const user = req.user;
 
-    if(!conversation){
+    if (!conversation) {
         /**
          * create new conversation
          */

@@ -10,3 +10,13 @@ export const conversationSchema = new mongoose.Schema({
 conversationSchema.index({ user: 1, lastMessage: -1 });
 
 export const ConversationModel = mongoose.model('Conversation', conversationSchema);
+
+
+
+
+
+/**
+ * Write an essay on INDIA ?
+ * 
+ * title = write an essay on INDIA about its history, culture, and significance.
+ */
