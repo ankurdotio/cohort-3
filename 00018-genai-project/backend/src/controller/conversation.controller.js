@@ -1,8 +1,7 @@
-import { env } from '../config/env.js';
 import { AppError } from '../utils/AppError.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 import { generateTitle } from '../services/ai/ai-tittle.service.js';
-import { createConversation, findConversationByIdAndUser } from '../DAO/conversation.dao.js';
+import { createConversation, findConversationByIdAndUser, findConversationsByUser } from '../DAO/conversation.dao.js';
 import { findMessagesByConversation, createMessage } from '../DAO/message.dao.js';
 import model from "../services/ai/main.service.js";
 import { HumanMessage, AIMessage } from 'langchain';
@@ -89,4 +88,38 @@ export async function handleMessage(req, res, next) {
         conversation: conversation._id
     });
 
+}
+
+
+/**
+ * @GET
+ * @route /api/v1/conversation/
+ * @desc get all the conversation of the user
+ */
+export async function getAllConversations(req, res) {
+    const user = req.user;
+    const conversations = await findConversationsByUser(user.id);
+    return sendSuccess(res, 200, 'Conversations fetched successfully', { conversations });
+}
+
+
+/**
+ * @GET
+ * @route /api/v1/conversation/messages/:conversationId
+ * @desc get all messages of a specific conversation
+ */
+export async function getMessagesByConversation(req, res, next) {
+    const { conversationId } = req.params;
+    const user = req.user;
+
+    //––––––––––––––––––––– check ownership of the conversation –––––––––––––––––––––
+    const conversation = await findConversationByIdAndUser(conversationId, user.id);
+
+    if (!conversation) {
+        return next(new AppError(404, 'Conversation not found'));
+    }
+
+    const messages = await findMessagesByConversation(conversation.id);
+
+    return sendSuccess(res, 200, 'Messages fetched successfully', { messages });
 }

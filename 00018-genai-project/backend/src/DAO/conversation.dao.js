@@ -16,3 +16,11 @@ export async function createConversation(input) {
 export async function findConversationByIdAndUser(id, userId) {
   return ConversationModel.findOne({ _id: id, user: userId });
 }
+
+/**
+ * @param {string | import('mongoose').Types.ObjectId} userId Owner identifier.
+ * @returns {Promise<import('../types/conversation.js').Conversation[]>} List of conversations owned by the user.
+ */
+export async function findConversationsByUser(userId) {
+  return ConversationModel.find({ user: userId });
+}
