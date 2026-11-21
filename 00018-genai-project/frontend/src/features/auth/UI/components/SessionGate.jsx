@@ -32,5 +32,5 @@ export function ProtectedRoute() {
 
 export function GuestRoute() {
   const { status } = useAuth();
-  return status === 'authenticated' ? <Navigate to="/account" replace /> : <Outlet />;
+  return status === 'authenticated' ? <Navigate to="/chat" replace /> : <Outlet />;
 }

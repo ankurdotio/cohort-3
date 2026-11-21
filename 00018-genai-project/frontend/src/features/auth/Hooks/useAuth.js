@@ -8,6 +8,31 @@ export function useAuth() {
   return { ...useSelector((state) => state.auth), retrySession: initializeSession };
 }
 
+/** Sign-out without subscribing to auth state, for components that only need the action. */
+export function useSignOut() {
+  const dispatch = useDispatch();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function signOut() {
+    if (pending) return;
+    setPending(true);
+    setError(null);
+    try {
+      await authApi.logout();
+      dispatch(sessionCleared());
+    } catch (failure) {
+      if (failure.response?.status === 401) dispatch(sessionCleared());
+      else {
+        setError(getApiError(failure).message);
+        setPending(false);
+      }
+    }
+  }
+
+  return { pending, error, signOut };
+}
+
 export function useAccount() {
   const auth = useAuth();
   const dispatch = useDispatch();

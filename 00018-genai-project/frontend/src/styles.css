@@ -78,3 +78,40 @@
   }
   .text-link { @apply rounded-sm font-semibold text-forest underline-offset-4 hover:underline disabled:opacity-60; }
 }
+
+/* AI message Markdown. Built from theme tokens so it follows light/dark mode. */
+@layer components {
+  .markdown { @apply min-w-0 text-[15px] leading-7 break-words text-ink; }
+  .markdown > * + * { @apply mt-4; }
+  .markdown :is(h1, h2, h3, h4) { @apply mt-7 mb-3 font-display font-semibold tracking-[-0.3px] text-ink first:mt-0; }
+  .markdown h1 { @apply text-2xl; }
+  .markdown h2 { @apply text-xl; }
+  .markdown h3 { @apply text-lg; }
+  .markdown h4 { @apply text-base; }
+  .markdown strong { @apply font-semibold; }
+  .markdown a { @apply font-medium text-forest underline underline-offset-4; }
+  .markdown :is(ul, ol) { @apply space-y-1.5 pl-6; }
+  .markdown ul { @apply list-disc; }
+  .markdown ol { @apply list-decimal; }
+  .markdown li > :is(ul, ol) { @apply mt-1.5; }
+  .markdown li::marker { @apply text-muted; }
+  .markdown li:has(> input[type="checkbox"]) { @apply list-none -ml-6; }
+  .markdown input[type="checkbox"] { @apply mr-2 accent-forest; }
+  .markdown blockquote { @apply border-l-2 border-chip-line pl-4 text-muted; }
+  .markdown hr { @apply my-6 border-line; }
+  .markdown :not(pre) > code { @apply rounded-md bg-sage px-1.5 py-0.5 font-mono text-[0.85em] text-forest; }
+  .markdown pre { @apply overflow-x-auto rounded-xl border border-line bg-field p-4 text-[13px] leading-6; }
+  .markdown pre code { @apply font-mono; }
+  .markdown-table { @apply overflow-x-auto rounded-xl border border-line; }
+  .markdown table { @apply w-full border-collapse text-left text-sm; }
+  .markdown thead { @apply bg-sage; }
+  .markdown th { @apply px-4 py-2.5 font-semibold whitespace-nowrap text-forest; }
+  .markdown td { @apply border-t border-line px-4 py-2.5 align-top; }
+  .markdown tbody tr:nth-child(even) { @apply bg-field; }
+
+  /* Blinking caret after the last streamed block. */
+  .markdown-streaming .markdown > :last-child::after {
+    content: "";
+    @apply ml-0.5 inline-block h-4 w-1.5 translate-y-0.5 animate-pulse bg-forest align-baseline motion-reduce:animate-none;
+  }
+}
