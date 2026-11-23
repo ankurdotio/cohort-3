@@ -28,4 +28,6 @@ export const env = Object.freeze({
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
   GROQ_API_KEY: process.env.GROQ_API_KEY,
+  TAVILY_URL: process.env.TAVILY_URL,
+  COHERE_API_KEY: process.env.COHERE_API_KEY,
 });
