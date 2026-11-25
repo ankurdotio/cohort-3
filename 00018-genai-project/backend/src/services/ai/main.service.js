@@ -5,13 +5,13 @@ import { ChatOpenAI } from "@langchain/openai"
 import { CohereClientV2 } from "cohere-ai"
 
 
-const cohereClient = new CohereClientV2({
-    token: env.COHERE_API_KEY
-})
 
-const model = new ChatCohere({
-    model: "command-a-05-2026",
-    client: cohereClient
+const model = new ChatOpenAI({
+    model: "command-a-plus-05-2026",
+    apiKey: env.COHERE_API_KEY,
+    configuration: {
+        baseURL: "https://api.cohere.ai/compatibility/v1"
+    }
 });
 
 

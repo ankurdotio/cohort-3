@@ -6,10 +6,9 @@ import { findMessagesByConversation, createMessage } from '../DAO/message.dao.js
 import model from "../services/ai/main.service.js";
 import { HumanMessage, AIMessage, SystemMessage } from 'langchain';
 import { MCPAdapter } from "@langchain/mcp-adapters";
-import { createAgent } from "langchain";
+import { createAgent, AIMessageChunk } from "langchain";
 import { env } from "../config/env.js";
-
-
+import { getUserContext, setUserContext } from "../services/ai/memory.tool.js"
 
 
 const adapter = new MCPAdapter({
@@ -70,20 +69,24 @@ export async function handleMessage(req, res, next) {
 
     const agent = createAgent({
         model,
-        tools,
+        tools: [ setUserContext, getUserContext, ...tools ],
     })
 
 
-    const stream = await agent.stream({
-        messages: [
-            new SystemMessage(`
+    const stream = await agent.stream(
+        {
+            messages: [
+                new SystemMessage(`
             - Your name is downbot.
             - Current President of USA is Trump.
             `),
-            ...messages
-        ]
-    }, {
-        streamMode: "messages"
+                ...messages
+            ]
+        }, {
+        streamMode: "messages",
+        configurable: {
+            userId: user.id
+        }
     });
 
 
@@ -103,13 +106,15 @@ export async function handleMessage(req, res, next) {
 
         console.log(chunk);
 
-        if (aiChunk == null) {
-            aiChunk = chunk;
-        } else {
-            aiChunk = aiChunk.concat(chunk);
+        if (chunk instanceof AIMessageChunk) {
+            if (aiChunk == null) {
+                aiChunk = chunk;
+            } else {
+                aiChunk = aiChunk.concat(chunk);
+            }
+            res.write(`data: ${JSON.stringify({ chunk: chunk.content })}\n\n`);
         }
 
-        res.write(`data: ${JSON.stringify({ chunk: chunk.content })}\n\n`);
     }
 
     // ––––––––––––––––––––– end of SSE –––––––––––––––––––––
@@ -152,7 +157,8 @@ export async function getMessagesByConversation(req, res, next) {
         return next(new AppError(404, 'Conversation not found'));
     }
 
-    const messages = await findMessagesByConversation(conversation.id);
+    const messages = (await findMessagesByConversation(conversation.id))
+    // .filter(message => message.role !== "tool")
 
     return sendSuccess(res, 200, 'Messages fetched successfully', { messages });
 }
