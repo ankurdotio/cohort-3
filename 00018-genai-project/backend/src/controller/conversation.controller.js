@@ -11,6 +11,8 @@ import { env } from "../config/env.js";
 import { getUserContext, setUserContext } from "../services/ai/memory.tool.js"
 
 
+
+
 const adapter = new MCPAdapter({
     servers: {
         tavily: {
@@ -78,7 +80,7 @@ export async function handleMessage(req, res, next) {
             messages: [
                 new SystemMessage(`
             - Your name is downbot.
-            - Current President of USA is Trump.
+            - Current Date:- ${new Date().toISOString()}
             `),
                 ...messages
             ]
@@ -103,8 +105,6 @@ export async function handleMessage(req, res, next) {
 
     let aiChunk = null;
     for await (const [ chunk ] of stream) {
-
-        console.log(chunk);
 
         if (chunk instanceof AIMessageChunk) {
             if (aiChunk == null) {

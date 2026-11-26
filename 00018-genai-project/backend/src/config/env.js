@@ -1,5 +1,7 @@
 import 'dotenv/config';
 
+
+
 const required = [ 'MONGODB_URI', 'ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET', 'GROQ_API_KEY' ];
 for (const key of required) {
   if (!process.env[ key ]?.trim()) throw new Error(`Missing required environment variable: ${key}`);
